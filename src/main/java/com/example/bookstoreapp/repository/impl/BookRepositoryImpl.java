@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class BookRepositoryImpl implements BookRepository {
 
-    private static final String CAN_T_SAVE_BOOK_MSG = "Can't save book ";
+    private static final String CAN_T_SAVE_BOOK_MSG = "Can't save book";
     private final EntityManagerFactory entityManagerFactory;
 
     @Autowired
