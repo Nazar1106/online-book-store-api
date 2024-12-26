@@ -18,7 +18,7 @@ public class BookStoreAppApplication {
     private static final String ISBN = "978-0451524935";
     private static final BigDecimal PRICE = BigDecimal.valueOf(9.99);
     private static final String DESCRIPTION = "A dystopian novel where Winston Smith rebels against"
-            + " a totalitarian regime that controls all aspects of life.\n";
+            + " a totalitarian regime that controls all aspects of life";
     private static final String COVER_IMAGE = "Often features a red background"
             + ", symbolizing oppression.";
     private final BookService bookService;
