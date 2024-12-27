@@ -5,23 +5,19 @@ import com.example.bookstoreapp.repository.BookRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class BookRepositoryImpl implements BookRepository {
 
     private static final String CAN_T_SAVE_BOOK_MSG = "Can't save book";
-    private final EntityManagerFactory entityManagerFactory;
+    private static final String CAN_T_FIND_BOOKS_MSG = "Can't find books";
 
-    @Autowired
-    public BookRepositoryImpl(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
-    }
+    private final EntityManagerFactory entityManagerFactory;
 
     @Override
     public Book save(Book book) {
@@ -42,12 +38,12 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public List<Book> findAll() {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.createQuery("FROM Book");
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Book> criteriaQuery = criteriaBuilder.createQuery(Book.class);
-        Root<Book> root = criteriaQuery.from(Book.class);
-        criteriaQuery.select(root);
-        return entityManager.createQuery(criteriaQuery).getResultList();
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            TypedQuery<Book> fromBook = entityManager
+                    .createQuery("FROM Book ", Book.class);
+            return fromBook.getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException(CAN_T_FIND_BOOKS_MSG, e);
+        }
     }
 }
