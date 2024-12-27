@@ -1,6 +1,7 @@
 package com.example.bookstoreapp.repository.impl;
 
 import com.example.bookstoreapp.entity.Book;
+import com.example.bookstoreapp.exception.EntityNotFoundException;
 import com.example.bookstoreapp.repository.BookRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -16,6 +17,7 @@ public class BookRepositoryImpl implements BookRepository {
 
     private static final String CAN_T_SAVE_BOOK_MSG = "Can't save book";
     private static final String CAN_T_FIND_BOOKS_MSG = "Can't find books";
+    private static final String CAN_T_FIND_BOOK_BY_ID_MSG = "Can't find book by id ";
 
     private final EntityManagerFactory entityManagerFactory;
 
@@ -43,7 +45,16 @@ public class BookRepositoryImpl implements BookRepository {
                     .createQuery("FROM Book ", Book.class);
             return fromBook.getResultList();
         } catch (Exception e) {
-            throw new RuntimeException(CAN_T_FIND_BOOKS_MSG, e);
+            throw new EntityNotFoundException(CAN_T_FIND_BOOKS_MSG, e);
+        }
+    }
+
+    @Override
+    public Book getBookById(Long id) {
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return entityManager.find(Book.class, id);
+        } catch (Exception e) {
+            throw new EntityNotFoundException(CAN_T_FIND_BOOK_BY_ID_MSG + id, e);
         }
     }
 }
