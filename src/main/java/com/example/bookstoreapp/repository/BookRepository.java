@@ -2,6 +2,7 @@ package com.example.bookstoreapp.repository;
 
 import com.example.bookstoreapp.entity.Book;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookRepository {
 
@@ -9,5 +10,5 @@ public interface BookRepository {
 
     List<Book> findAll();
 
-    Book getBookById(Long id);
+    Optional<Book> getBookById(Long id);
 }

@@ -7,6 +7,7 @@ import com.example.bookstoreapp.mapper.BookMapper;
 import com.example.bookstoreapp.repository.BookRepository;
 import com.example.bookstoreapp.service.BookService;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
         Book book = bookMapper.toBook(requestDto);
-        Book saved = bookRepository.save(book);
-        return bookMapper.bookToBookDto(saved);
+        bookRepository.save(book);
+        return bookMapper.bookToBookDto(book);
     }
 
     @Override
@@ -33,7 +34,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto getBookById(Long id) {
-        Book bookById = bookRepository.getBookById(id);
-        return bookMapper.bookToBookDto(bookById);
+        Optional<Book> bookById = bookRepository.getBookById(id);
+        return bookById.map(bookMapper::bookToBookDto).orElse(null);
     }
 }
