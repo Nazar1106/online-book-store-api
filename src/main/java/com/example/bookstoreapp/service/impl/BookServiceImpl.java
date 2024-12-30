@@ -3,6 +3,7 @@ package com.example.bookstoreapp.service.impl;
 import com.example.bookstoreapp.dto.BookDto;
 import com.example.bookstoreapp.dto.CreateBookRequestDto;
 import com.example.bookstoreapp.entity.Book;
+import com.example.bookstoreapp.exception.EntityNotFoundException;
 import com.example.bookstoreapp.mapper.BookMapper;
 import com.example.bookstoreapp.repository.BookRepository;
 import com.example.bookstoreapp.service.BookService;
@@ -35,6 +36,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto getBookById(Long id) {
         Optional<Book> bookById = bookRepository.getBookById(id);
-        return bookById.map(bookMapper::bookToBookDto).orElse(null);
+        return bookById.map(bookMapper::bookToBookDto)
+                .orElseThrow(() -> new EntityNotFoundException("Can't find book" + id));
     }
 }
