@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @EqualsAndHashCode
 @RequiredArgsConstructor
@@ -19,6 +21,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
+@SQLDelete(sql = "UPDATE books SET deleted = true WHERE id =?")
+@SQLRestriction("deleted = false")
 @Table(name = "books")
 public class Book {
 
@@ -40,5 +44,8 @@ public class Book {
 
     private String description;
 
+    @Column(name = "cover_image")
     private String coverImage;
+
+    private boolean deleted = false;
 }

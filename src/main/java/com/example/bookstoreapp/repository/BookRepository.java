@@ -1,14 +1,27 @@
 package com.example.bookstoreapp.repository;
 
+import com.example.bookstoreapp.dto.CreateBookRequestDto;
 import com.example.bookstoreapp.entity.Book;
-import java.util.List;
-import java.util.Optional;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-public interface BookRepository {
+@Repository
+public interface BookRepository extends JpaRepository<Book, Long> {
 
-    Book save(Book book);
-
-    List<Book> findAll();
-
-    Optional<Book> getBookById(Long id);
+    @Modifying
+    @Transactional
+    @Query("update Book b set "
+            + "b.title = :#{#book.title}, "
+            + "b.author = :#{#book.author}, "
+            + "b.isbn = :#{#book.isbn}, "
+            + "b.price = :#{#book.price}, "
+            + "b.description = :#{#book.description}, "
+            + "b.coverImage = :#{#book.coverImage} "
+            + "where b.id = :id")
+    void updateBookById(@Param("id") Long id,
+                        @Param("book") CreateBookRequestDto book);
 }
