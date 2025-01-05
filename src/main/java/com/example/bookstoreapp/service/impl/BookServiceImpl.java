@@ -8,10 +8,8 @@ import com.example.bookstoreapp.exception.EntityNotFoundException;
 import com.example.bookstoreapp.mapper.BookMapper;
 import com.example.bookstoreapp.repository.BookRepository;
 import com.example.bookstoreapp.service.BookService;
-
 import java.util.List;
 import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +17,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-    private static final String CAN_T_FIND_BOOK_MSG = "Can't find book";
     public static final String T_UPDATE_BOOK_BY_ID_MSG = "Can't update book by id ";
     public static final String CAN_T_DELETE_BOOK_BY_ID_MSG = "Can't delete book by id ";
+    private static final String CAN_T_FIND_BOOK_MSG = "Can't find book";
 
     private final BookRepository bookRepository;
 
@@ -69,5 +67,6 @@ public class BookServiceImpl implements BookService {
         } else {
             throw new EntityNotFoundException(CAN_T_DELETE_BOOK_BY_ID_MSG + id);
         }
+        bookRepository.deleteById(id);
     }
 }
