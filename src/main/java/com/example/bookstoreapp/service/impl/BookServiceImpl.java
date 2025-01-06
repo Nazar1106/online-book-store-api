@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-    public static final String T_UPDATE_BOOK_BY_ID_MSG = "Can't update book by id ";
-    public static final String CAN_T_DELETE_BOOK_BY_ID_MSG = "Can't delete book by id ";
+    private static final String T_UPDATE_BOOK_BY_ID_MSG = "Can't update book by id ";
+    private static final String CAN_T_DELETE_BOOK_BY_ID_MSG = "Can't delete book by id ";
     private static final String CAN_T_FIND_BOOK_MSG = "Can't find book";
 
     private final BookRepository bookRepository;
@@ -47,24 +47,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto updateBook(Long id, UpdateBookDto book) {
-        Book updatedBook = bookRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(T_UPDATE_BOOK_BY_ID_MSG + id));
-        updatedBook.setTitle(book.getTitle());
-        updatedBook.setAuthor(book.getAuthor());
-        updatedBook.setIsbn(book.getIsbn());
-        updatedBook.setPrice(book.getPrice());
-        updatedBook.setDescription(book.getDescription());
-        updatedBook.setCoverImage(book.getCoverImage());
-
+        bookRepository.findById(id).orElseThrow(()
+                -> new EntityNotFoundException(T_UPDATE_BOOK_BY_ID_MSG + id));
+        Book updatedBook = bookMapper.updateBookToBook(book);
         bookRepository.save(updatedBook);
         return bookMapper.bookToBookDto(updatedBook);
     }
 
     @Override
     public void deleteById(Long id) {
-        if (bookRepository.existsById(id)) {
-            bookRepository.deleteById(id);
-        } else {
+        if (!bookRepository.existsById(id)) {
             throw new EntityNotFoundException(CAN_T_DELETE_BOOK_BY_ID_MSG + id);
         }
         bookRepository.deleteById(id);
