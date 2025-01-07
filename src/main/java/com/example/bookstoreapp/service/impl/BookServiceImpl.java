@@ -1,16 +1,19 @@
 package com.example.bookstoreapp.service.impl;
 
 import com.example.bookstoreapp.dto.BookDto;
+import com.example.bookstoreapp.dto.BookSearchParametersDto;
 import com.example.bookstoreapp.dto.CreateBookRequestDto;
 import com.example.bookstoreapp.dto.UpdateBookDto;
 import com.example.bookstoreapp.entity.Book;
 import com.example.bookstoreapp.exception.EntityNotFoundException;
 import com.example.bookstoreapp.mapper.BookMapper;
-import com.example.bookstoreapp.repository.BookRepository;
+import com.example.bookstoreapp.repository.book.BookRepository;
+import com.example.bookstoreapp.repository.book.BookSpecificationBuilder;
 import com.example.bookstoreapp.service.BookService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Transactional
@@ -19,12 +22,16 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
 
     private static final String CANT_UPDATE_BOOK_BY_ID_MSG = "Can't update book by id ";
+  
     private static final String CANT_DELETE_BOOK_BY_ID_MSG = "Can't delete book by id ";
+  
     private static final String CANT_FIND_BOOK_MSG = "Can't find book";
 
     private final BookRepository bookRepository;
 
     private final BookMapper bookMapper;
+
+    private final BookSpecificationBuilder specificationBuilder;
 
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
@@ -44,6 +51,14 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(CANT_FIND_BOOK_MSG + id));
         return bookMapper.toDto(book);
+    }
+
+    @Override
+    public List<BookDto> searchBooks(BookSearchParametersDto bookSearchParametersDto) {
+        Specification<Book> bookSpecification = specificationBuilder
+                .build(bookSearchParametersDto);
+        List<Book> bookList = bookRepository.findAll(bookSpecification);
+        return bookMapper.toDtos(bookList);
     }
 
     @Override
