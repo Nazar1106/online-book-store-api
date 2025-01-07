@@ -52,9 +52,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDto> searchBooks(BookSearchParametersDto bookSearchParametersDto) {
-        Specification<Book> phoneSpecification = specificationBuilder
+        Specification<Book> bookSpecification = specificationBuilder
                 .build(bookSearchParametersDto);
-        List<Book> bookList = bookRepository.findAll(phoneSpecification);
+        List<Book> bookList = bookRepository.findAll(bookSpecification);
         return bookMapper.listBookToListBookDto(bookList);
     }
 

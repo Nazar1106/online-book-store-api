@@ -1,5 +1,7 @@
 package com.example.bookstoreapp.dto;
 
-public record BookSearchParametersDto(String[] title, String[] author, Double [] price,
+import java.math.BigDecimal;
+
+public record BookSearchParametersDto(String[] title, String[] author, BigDecimal[] price,
                                       String[] isbn) {
 }
