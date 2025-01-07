@@ -2,21 +2,25 @@ package com.example.bookstoreapp.service.impl;
 
 import com.example.bookstoreapp.dto.BookDto;
 import com.example.bookstoreapp.dto.CreateBookRequestDto;
+import com.example.bookstoreapp.dto.UpdateBookDto;
 import com.example.bookstoreapp.entity.Book;
 import com.example.bookstoreapp.exception.EntityNotFoundException;
 import com.example.bookstoreapp.mapper.BookMapper;
 import com.example.bookstoreapp.repository.BookRepository;
 import com.example.bookstoreapp.service.BookService;
+import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-    private static final String CAN_T_FIND_BOOK_MSG = "Can't find book";
+    private static final String CANT_UPDATE_BOOK_BY_ID_MSG = "Can't update book by id ";
+    private static final String CANT_DELETE_BOOK_BY_ID_MSG = "Can't delete book by id ";
+    private static final String CANT_FIND_BOOK_MSG = "Can't find book";
 
     private final BookRepository bookRepository;
 
@@ -24,37 +28,37 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
-        Book book = bookMapper.toBook(requestDto);
+        Book book = bookMapper.toModel(requestDto);
         bookRepository.save(book);
-        return bookMapper.bookToBookDto(book);
+        return bookMapper.toDto(book);
     }
 
     @Override
     public List<BookDto> findAll() {
         List<Book> bookList = bookRepository.findAll();
-        return bookMapper.listBookToListBookDto(bookList);
+        return bookMapper.toDtos(bookList);
     }
 
     @Override
     public BookDto getBookById(Long id) {
-        Optional<Book> bookById = bookRepository.findById(id);
-        return bookById.map(bookMapper::bookToBookDto)
-                .orElseThrow(() -> new EntityNotFoundException(CAN_T_FIND_BOOK_MSG + id));
+        Book book = bookRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(CANT_FIND_BOOK_MSG + id));
+        return bookMapper.toDto(book);
     }
 
     @Override
-    public BookDto updateBook(Long id, CreateBookRequestDto book) {
-        Optional<Book> bookById = bookRepository.findById(id);
-        if (bookById.isPresent()) {
-            bookRepository.updateBookById(id, book);
-        }
-        return bookMapper
-                .bookToBookDto(bookById.orElseThrow(()
-                        -> new EntityNotFoundException("Can't update book by id " + id)));
+    public BookDto updateBook(Long id, UpdateBookDto book) {
+        bookRepository.findById(id).orElseThrow(()
+                -> new EntityNotFoundException(CANT_UPDATE_BOOK_BY_ID_MSG + id));
+        Book updatedBook = bookMapper.updateBookFromDto(book);
+        return bookMapper.toDto(updatedBook);
     }
 
     @Override
     public void deleteById(Long id) {
+        if (!bookRepository.existsById(id)) {
+            throw new EntityNotFoundException(CANT_DELETE_BOOK_BY_ID_MSG + id);
+        }
         bookRepository.deleteById(id);
     }
 }
