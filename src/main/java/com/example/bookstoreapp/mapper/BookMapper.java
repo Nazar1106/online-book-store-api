@@ -11,11 +11,11 @@ import org.mapstruct.Mapper;
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
 
-    BookDto bookToBookDto(Book book);
+    BookDto toDto(Book book);
 
-    Book updateBookToBook(UpdateBookDto updateBookDto);
+    Book updateBookFromDto(UpdateBookDto updateBookDto);
 
-    Book toBook(CreateBookRequestDto createBookRequestDto);
+    Book toModel(CreateBookRequestDto createBookRequestDto);
 
-    List<BookDto> listBookToListBookDto(List<Book> list);
+    List<BookDto> toDtos(List<Book> books);
 }
