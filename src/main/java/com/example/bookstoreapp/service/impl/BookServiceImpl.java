@@ -25,7 +25,7 @@ public class BookServiceImpl implements BookService {
   
     private static final String CANT_DELETE_BOOK_BY_ID_MSG = "Can't delete book by id ";
   
-    private static final String CANT_FIND_BOOK_MSG = "Can't find book";
+    private static final String CANT_FIND_BOOK_MSG = "Can't find book by id ";
 
     private final BookRepository bookRepository;
 
