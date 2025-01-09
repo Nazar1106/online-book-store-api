@@ -5,19 +5,47 @@ import com.example.bookstoreapp.exception.EntityNotFoundException;
 import java.time.ZonedDateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class CustomGlobalExceptionHandler {
 
-    private static final HttpStatus NOT_FOUND = HttpStatus.NOT_FOUND;
+    public static final String VALIDATION_EXCEPTION_MSG = "Validation exception";
+    public static final String NO_RESOURCE_FOUND_MSG = "The resource doesn't exist";
+
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class,
+            MethodArgumentTypeMismatchException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiError> handleValidationException() {
+        ApiError apiError = new ApiError(
+                VALIDATION_EXCEPTION_MSG,
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {NoResourceFoundException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiError> handleNoResourceException() {
+        ApiError apiError = new ApiError(
+                NO_RESOURCE_FOUND_MSG,
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(value = {EntityNotFoundException.class})
     public ResponseEntity<ApiError> handleEntityNotFoundException(EntityNotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage(),
-                NOT_FOUND,
+                HttpStatus.NOT_FOUND,
                 ZonedDateTime.now());
-        return new ResponseEntity<>(apiError, NOT_FOUND);
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 }

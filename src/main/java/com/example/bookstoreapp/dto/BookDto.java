@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class BookDto {
 
-    private Long id;
     @NotBlank
     private String title;
     @NotBlank
