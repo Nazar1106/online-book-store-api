@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class CustomGlobalExceptionHandler {
 
-    private static final HttpStatus NOT_FOUND = HttpStatus.NOT_FOUND;
-
     @ExceptionHandler(value = {EntityNotFoundException.class})
     public ResponseEntity<ApiError> handleEntityNotFoundException(EntityNotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage(),
-                NOT_FOUND,
+                HttpStatus.NOT_FOUND,
                 ZonedDateTime.now());
-        return new ResponseEntity<>(apiError, NOT_FOUND);
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 }
