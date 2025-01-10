@@ -1,6 +1,5 @@
 package com.example.bookstoreapp.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -17,7 +16,6 @@ public class UpdateBookDto {
     private String author;
     @NotBlank
     private String isbn;
-    @Min(0)
     @NotNull
     private BigDecimal price;
     @NotBlank
