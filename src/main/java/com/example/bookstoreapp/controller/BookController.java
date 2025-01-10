@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import java.awt.print.Book;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,19 +36,6 @@ public class BookController {
 
     private final BookService bookService;
 
-    @Operation(summary = "Get all books",
-            description = "The method returns all available books in the store")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the books",
-            content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Book.class))}),
-            @ApiResponse(responseCode = "400",
-            description = "Request is invalid",
-            content = @Content)})
-    @GetMapping
-    public List<BookDto> getAll() {
-        return bookService.findAll();
-    }
-
     @Operation(summary = "Get books by pages",
             description = "The method returns all available books "
             + "on specific pages and can also sort the data based on parameters in the request ")
@@ -57,9 +45,9 @@ public class BookController {
             @ApiResponse(responseCode = "400",
             description = "Request is invalid",
             content = @Content)})
-    @GetMapping("/pages")
-    public List<BookDto> getBooksByPage(Pageable pageable) {
-        return bookService.getBooksByPage(pageable);
+    @GetMapping
+    public Page<BookDto> getAll(Pageable pageable) {
+        return bookService.findAll(pageable);
     }
 
     @Operation(summary = "Get book by id",
@@ -75,7 +63,7 @@ public class BookController {
             content = @Content),
     })
     @GetMapping("/{id}")
-    public BookDto getBookById(@Valid @PathVariable Long id) {
+    public BookDto getBookById(@PathVariable Long id) {
         return bookService.getBookById(id);
     }
 

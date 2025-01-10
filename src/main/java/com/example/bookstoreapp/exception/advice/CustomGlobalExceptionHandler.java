@@ -1,4 +1,4 @@
-package com.example.bookstoreapp.advice;
+package com.example.bookstoreapp.exception.advice;
 
 import com.example.bookstoreapp.exception.ApiError;
 import com.example.bookstoreapp.exception.EntityNotFoundException;
