@@ -1,4 +1,4 @@
-package com.example.bookstoreapp.advice;
+package com.example.bookstoreapp.exception.advice;
 
 import com.example.bookstoreapp.exception.ApiError;
 import com.example.bookstoreapp.exception.EntityNotFoundException;
@@ -24,18 +24,16 @@ public class CustomGlobalExceptionHandler {
     public ResponseEntity<ApiError> handleValidationException() {
         ApiError apiError = new ApiError(
                 VALIDATION_EXCEPTION_MSG,
-                HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {NoResourceFoundException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ApiError> handleNoResourceException() {
         ApiError apiError = new ApiError(
                 NO_RESOURCE_FOUND_MSG,
-                HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
@@ -44,7 +42,6 @@ public class CustomGlobalExceptionHandler {
     @ExceptionHandler(value = {EntityNotFoundException.class})
     public ResponseEntity<ApiError> handleEntityNotFoundException(EntityNotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage(),
-                HttpStatus.NOT_FOUND,
                 ZonedDateTime.now());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
