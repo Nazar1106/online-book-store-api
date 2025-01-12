@@ -13,6 +13,8 @@ import com.example.bookstoreapp.service.BookService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +24,10 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
 
     private static final String CANT_UPDATE_BOOK_BY_ID_MSG = "Can't update book by id ";
-  
+
     private static final String CANT_DELETE_BOOK_BY_ID_MSG = "Can't delete book by id ";
-  
-    private static final String CANT_FIND_BOOK_MSG = "Can't find book";
+
+    private static final String CANT_FIND_BOOK_MSG = "Can't find book by id ";
 
     private final BookRepository bookRepository;
 
@@ -41,9 +43,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> findAll() {
-        List<Book> bookList = bookRepository.findAll();
-        return bookMapper.toDtos(bookList);
+    public Page<BookDto> findAll(Pageable pageable) {
+        return bookRepository.findAll(pageable)
+                .map(bookMapper::toDto);
     }
 
     @Override
