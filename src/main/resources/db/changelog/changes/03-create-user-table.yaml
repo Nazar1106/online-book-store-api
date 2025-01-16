@@ -4,7 +4,7 @@ databaseChangeLog:
       author: Nazar Kupnovytskyi
       changes:
         - createTable:
-            tableName: user
+            tableName: users
             columns:
               - column:
                   name: id
@@ -37,5 +37,3 @@ databaseChangeLog:
               - column:
                   name: shipping_address
                   type: VARCHAR(255)
-                  constraints:
-                    nullable: true

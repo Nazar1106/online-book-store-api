@@ -16,13 +16,12 @@ public class UserServiceImpl implements UserService {
 
     public static final String CAN_T_REGISTER_USER_MSG = "Can't register user ";
     private final UserMapper userMapper;
-
     private final UserRepository userRepository;
 
     @Override
     public UserResponseDto registerUser(UserRegistrationRequestDto requestDto)
             throws RegistrationException {
-        if (userRepository.findByEmail(requestDto.getEmail()).isPresent()) {
+        if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new RegistrationException(CAN_T_REGISTER_USER_MSG);
         }
         User user = userMapper.toModel(requestDto);
