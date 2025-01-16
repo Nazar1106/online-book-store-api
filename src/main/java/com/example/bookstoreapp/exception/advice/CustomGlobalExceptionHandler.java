@@ -2,6 +2,7 @@ package com.example.bookstoreapp.exception.advice;
 
 import com.example.bookstoreapp.exception.ApiError;
 import com.example.bookstoreapp.exception.EntityNotFoundException;
+import com.example.bookstoreapp.exception.RegistrationException;
 import java.time.ZonedDateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class CustomGlobalExceptionHandler {
     public static final String NO_RESOURCE_FOUND_MSG = "The resource doesn't exist";
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class,
-            MethodArgumentTypeMismatchException.class})
+            MethodArgumentTypeMismatchException.class, RegistrationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiError> handleValidationException() {
         ApiError apiError = new ApiError(
