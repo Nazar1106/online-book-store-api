@@ -2,6 +2,7 @@ package com.example.bookstoreapp.exception.advice;
 
 import com.example.bookstoreapp.exception.ApiError;
 import com.example.bookstoreapp.exception.EntityNotFoundException;
+import com.example.bookstoreapp.exception.RegistrationException;
 import java.time.ZonedDateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class CustomGlobalExceptionHandler {
 
     public static final String VALIDATION_EXCEPTION_MSG = "Validation exception";
     public static final String NO_RESOURCE_FOUND_MSG = "The resource doesn't exist";
+    public static final String RESOURCE_CONFLICT = "The resource conflict";
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class,
             MethodArgumentTypeMismatchException.class})
@@ -44,5 +46,12 @@ public class CustomGlobalExceptionHandler {
         ApiError apiError = new ApiError(ex.getMessage(),
                 ZonedDateTime.now());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {RegistrationException.class})
+    public ResponseEntity<ApiError> handleRegistrationException() {
+        ApiError apiError = new ApiError(RESOURCE_CONFLICT,
+                ZonedDateTime.now());
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 }
