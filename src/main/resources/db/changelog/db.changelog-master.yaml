@@ -5,3 +5,13 @@ databaseChangeLog:
       file: db/changelog/changes/02-add-field-deleted-book-table.yaml
   - include:
       file: db/changelog/changes/03-create-user-table.yaml
+  - include:
+      file: db/changelog/changes/04-create-role-table.yaml
+  - include:
+      file: db/changelog/changes/05-create-users-roles-table.yaml
+  - include:
+      file: db/changelog/changes/insert/003-insert-users.yaml
+  - include:
+      file: db/changelog/changes/insert/004-insert-roles.yaml
+  - include:
+      file: db/changelog/changes/insert/005-insert-roles-to-users.yaml
