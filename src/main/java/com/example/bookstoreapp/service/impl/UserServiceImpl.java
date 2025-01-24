@@ -7,10 +7,12 @@ import com.example.bookstoreapp.exception.RegistrationException;
 import com.example.bookstoreapp.mapper.UserMapper;
 import com.example.bookstoreapp.repository.user.UserRepository;
 import com.example.bookstoreapp.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
