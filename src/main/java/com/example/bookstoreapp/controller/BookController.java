@@ -4,7 +4,6 @@ import com.example.bookstoreapp.dto.bookdto.BookDto;
 import com.example.bookstoreapp.dto.bookdto.BookSearchParametersDto;
 import com.example.bookstoreapp.dto.bookdto.CreateBookRequestDto;
 import com.example.bookstoreapp.dto.bookdto.UpdateBookDto;
-import com.example.bookstoreapp.entity.User;
 import com.example.bookstoreapp.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,9 +49,8 @@ public class BookController {
                     content = @Content)})
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping
-    public Page<BookDto> getAll(Authentication authentication, Pageable pageable) {
-        User user = (User) authentication.getPrincipal();
-        return bookService.findAll(user.getEmail(), pageable);
+    public Page<BookDto> getAll(Pageable pageable) {
+        return bookService.findAll(pageable);
     }
 
     @Operation(summary = "Get book by id",
