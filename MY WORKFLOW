@@ -1,36 +1,9 @@
-1) Add spring-boot-starter-security to the project. - todo DONE
-2) Add SecurityConfig class with PasswordEncoder and SecurityFilterChain beans. - todo DONE
-3) Implement UserDetails interface in the User class. - todo DONE
-4) Add the implementation for UserDetailsService interface. - todo DONE
-5) Don't forget that /auth/registration should be public available. - todo DONE
-6) Add Role entity with the following fields: - todo DONE
-- id (Long, PK) - todo DONE
-n- ame (RoleName, not null, unique) (RoleName is enum) - todo DONE
-7) Add RoleRepository - todo DONE (MAYBE I SHOULD ADD SOMETHING ELSE)
-8) Add the following fields to the User entity: - todo DONE
-- Set<Role> roles todo DONE
-9) Add Liquibase changesets to insert roles into DB and assign role for existing users. Be sure you have
-at least one user in DB with role admin. todo DONE
-10) Be sure that all users created by the Liquibase scripts have some role (or roles). - todo DONE
-11) Use @PreAuthorize with proper role access over the existing endpoints.
-12) Be sure Swagger is available once you have added - todo DONE
-- add the following line requestMatchers("/swagger-ui/**", "/v3/api-docs/**", <other-endpoints-if-needed>)
-to the SecurityFilterChain bean. todo DONE
-
-
-PROBLEMS ISSUES:
-1) How can I realise relation in this project? (I have problem with relation in User class). todo DONE
-
-
-Common mistakes
-1) Ensure the correct sequence of script execution. For example, think what table should be created first:
-users_roles or roles? - todo DONE
-2) In the users_roles table ensure columns together form a composite key - todo DONE
-3) Be sure you have created at least one user with the role 'admin' as specified in the task requirements. - todo DONE
-4) Ensure that all users created by the Liquibase scripts have some role (or roles). - todo DONE
-5) When adding users in the Liquibase script, avoid inserting unhashed passwords such as '1234'. - todo DONE
-6) Think about how we should add columns like is_deleted. Should we add them directly to existing scripts
-or there is another better way?
-7) Verify that alterations or additions to the table structure maintain data integrity and consistency.
-8) Think if is it ok to hardcode identifiers in the Liquibase scripts? What is the difference between
-value and valueComputed in the YML scripts?
+STEP - 1: step add dependency
+STEP - 2: create controller login
+STEP - 3: create DTO record
+STEP - 4:
+STEP - 5:
+STEP - 6:
+STEP - 7:
+STEP - 8:
+STEP - 9:
