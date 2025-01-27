@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,14 +38,16 @@ public class BookController {
     private final BookService bookService;
 
     @Operation(summary = "Get books by pages",
-            description = "The method returns all available books "
-            + "on specific pages and can also sort the data based on parameters in the request ")
+            description = "The method returns all available books on specific pages "
+                    + "and can also sort the data "
+                    + "based on parameters in the request ")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the books",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Book.class))}),
             @ApiResponse(responseCode = "400",
-            description = "Request is invalid",
-            content = @Content)})
+                    description = "Request is invalid",
+                    content = @Content)})
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping
     public Page<BookDto> getAll(Pageable pageable) {
         return bookService.findAll(pageable);
@@ -57,11 +60,12 @@ public class BookController {
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Book.class))}),
             @ApiResponse(responseCode = "400",
-            description = "Request is invalid", content = @Content),
+                    description = "Request is invalid", content = @Content),
             @ApiResponse(responseCode = "404",
-            description = "The book was not found by this ID",
-            content = @Content),
+                    description = "The book was not found by this ID",
+                    content = @Content),
     })
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/{id}")
     public BookDto getBookById(@PathVariable Long id) {
         return bookService.getBookById(id);
@@ -77,6 +81,7 @@ public class BookController {
             @ApiResponse(responseCode = "400",
                     description = "Request is invalid", content = @Content),
     })
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/search")
     public List<BookDto> search(BookSearchParametersDto bookSearchParametersDto) {
         return bookService.searchBooks(bookSearchParametersDto);
@@ -85,11 +90,12 @@ public class BookController {
     @Operation(summary = "Create new book", description = "This method creates new book")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "The book is created",
-            content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Book.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Book.class))}),
             @ApiResponse(responseCode = "400", description = "Request is invalid",
                     content = @Content)
     })
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookDto) {
@@ -100,13 +106,14 @@ public class BookController {
             + "book by specific ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "The book is updated",
-            content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Book.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Book.class))}),
             @ApiResponse(responseCode = "400", description = "Request is invalid",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "The book was not exist by this ID",
-            content = @Content)
+                    content = @Content)
     })
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public BookDto updateBook(@PathVariable Long id, @Valid @RequestBody UpdateBookDto book) {
         return bookService.updateBook(id, book);
@@ -124,6 +131,7 @@ public class BookController {
                     description = "The book was not exist by this ID",
                     content = @Content)
     })
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void deleteBookById(@PathVariable Long id) {
