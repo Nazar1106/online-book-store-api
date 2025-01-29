@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private static final String CAN_T_FIND_USER_BY_EMAIL = "Can't find user by email ";
+
     private final UserRepository userRepository;
 
     @Override

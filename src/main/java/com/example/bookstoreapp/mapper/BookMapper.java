@@ -15,7 +15,7 @@ public interface BookMapper {
 
     Book updateBookFromDto(UpdateBookDto updateBookDto);
 
-    Book toModel(CreateBookRequestDto createBookRequestDto);
+    Book toEntity(CreateBookRequestDto createBookRequestDto);
 
     List<BookDto> toDtos(List<Book> books);
 }

@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "books", description = "API for managing books")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/books")
+@RequestMapping("/books")
 public class BookController {
 
     private final BookService bookService;
