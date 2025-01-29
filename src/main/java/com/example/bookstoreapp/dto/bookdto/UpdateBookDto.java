@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,4 +25,7 @@ public class UpdateBookDto {
     private String description;
     @NotBlank
     private String coverImage;
+    //todo: THERE I NEED ADD CATEGORIES TOO?
+    private List<Long> categoryIds;
+
 }
