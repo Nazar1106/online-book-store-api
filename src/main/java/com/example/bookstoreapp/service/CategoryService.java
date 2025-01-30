@@ -2,11 +2,12 @@ package com.example.bookstoreapp.service;
 
 import com.example.bookstoreapp.dto.categorydto.CategoryRequestDto;
 import com.example.bookstoreapp.dto.categorydto.CategoryResponseDto;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CategoryService {
 
-    List<CategoryResponseDto> findAll();
+    Page<CategoryResponseDto> findAll(Pageable pageable);
 
     CategoryResponseDto getById(Long id);
 

@@ -1,5 +1,6 @@
 package com.example.bookstoreapp.dto.bookdto;
 
+import jakarta.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.Getter;
@@ -20,6 +21,6 @@ public class BookDto {
     private String description;
 
     private String coverImage;
-
+    @NotEmpty
     private List<Long> categoryIds;
 }

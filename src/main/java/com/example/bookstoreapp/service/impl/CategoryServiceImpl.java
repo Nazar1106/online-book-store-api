@@ -8,8 +8,9 @@ import com.example.bookstoreapp.mapper.CategoryMapper;
 import com.example.bookstoreapp.repository.category.CategoryRepository;
 import com.example.bookstoreapp.service.CategoryService;
 import jakarta.transaction.Transactional;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Transactional
@@ -24,9 +25,9 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    public List<CategoryResponseDto> findAll() {
-        List<Category> receivedBooks = categoryRepository.findAll();
-        return categoryMapper.toDtos(receivedBooks);
+    public Page<CategoryResponseDto> findAll(Pageable pageable) {
+        return categoryRepository.findAll(pageable)
+                .map(categoryMapper::toDto);
     }
 
     @Override
@@ -46,11 +47,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDto update(Long id, CategoryRequestDto requestDto) {
-        Category category = categoryRepository.findById(id).orElseThrow(()
+        categoryRepository.findById(id).orElseThrow(()
                 -> new EntityNotFoundException(CAN_T_FIND_CATEGORY_BY_ID_MSG + id));
-        category.setName(requestDto.getName());
-        category.setDescription(requestDto.getDescription());
-        return categoryMapper.toDto(category);
+        Category model = categoryMapper.toModel(requestDto);
+        return categoryMapper.toDto(model);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.bookstoreapp.dto.bookdto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
@@ -25,7 +26,7 @@ public class UpdateBookDto {
     private String description;
     @NotBlank
     private String coverImage;
-    //todo: THERE I NEED ADD CATEGORIES TOO?
+    @NotEmpty
     private List<Long> categoryIds;
 
 }
