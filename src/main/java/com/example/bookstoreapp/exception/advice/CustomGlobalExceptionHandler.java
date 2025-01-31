@@ -4,6 +4,7 @@ import com.example.bookstoreapp.exception.ApiError;
 import com.example.bookstoreapp.exception.EntityNotFoundException;
 import com.example.bookstoreapp.exception.RegistrationException;
 import java.time.ZonedDateTime;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,7 +22,7 @@ public class CustomGlobalExceptionHandler {
     public static final String RESOURCE_CONFLICT = "The resource conflict";
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class,
-            MethodArgumentTypeMismatchException.class})
+            MethodArgumentTypeMismatchException.class, DataIntegrityViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiError> handleValidationException() {
         ApiError apiError = new ApiError(
