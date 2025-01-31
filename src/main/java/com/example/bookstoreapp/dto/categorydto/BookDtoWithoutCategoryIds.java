@@ -1,14 +1,12 @@
-package com.example.bookstoreapp.dto.bookdto;
+package com.example.bookstoreapp.dto.categorydto;
 
-import jakarta.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class BookDto {
+public class BookDtoWithoutCategoryIds {
 
     private String title;
 
@@ -21,6 +19,4 @@ public class BookDto {
     private String description;
 
     private String coverImage;
-    @NotEmpty
-    private List<Long> categoryIds;
 }
