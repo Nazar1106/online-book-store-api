@@ -40,6 +40,7 @@ public class User implements UserDetails {
     private String firstName;
     @NotBlank
     private String lastName;
+
     private String shippingAddress;
     @ManyToMany
     @JoinTable(
