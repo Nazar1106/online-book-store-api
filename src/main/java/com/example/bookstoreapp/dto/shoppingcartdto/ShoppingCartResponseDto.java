@@ -9,6 +9,5 @@ public class ShoppingCartResponseDto {
 
     private Long bookId;
 
-    private Integer quantity;
-
+    private int quantity;
 }

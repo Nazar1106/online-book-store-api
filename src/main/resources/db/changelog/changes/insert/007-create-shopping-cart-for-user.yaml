@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-shopping-carts-for-users
+      author: Nazar Kupnovytskyi
+      changes:
+        - insert:
+            tableName: shopping_carts
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(SELECT id FROM users WHERE email = 'john.doe@example.com')"
+        - insert:
+            tableName: shopping_carts
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(SELECT id FROM users WHERE email = 'jane.smith@example.com')"
+        - insert:
+            tableName: shopping_carts
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(SELECT id FROM users WHERE email = 'alice.jones@example.com')"

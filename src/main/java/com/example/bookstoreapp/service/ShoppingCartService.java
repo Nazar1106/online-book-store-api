@@ -1,18 +1,18 @@
 package com.example.bookstoreapp.service;
 
-import com.example.bookstoreapp.dto.cartitemdto.CartItemResponseUpdateDto;
+import com.example.bookstoreapp.dto.cartitemdto.CartItemRequestDto;
+import com.example.bookstoreapp.dto.cartitemdto.CartItemUpdateDto;
 import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartDto;
-import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartRequestDto;
 import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartResponseDto;
-import java.util.List;
 
 public interface ShoppingCartService {
 
-    List<ShoppingCartDto> getAll();
+    ShoppingCartDto getByUserId(Long authenticationId);
 
-    ShoppingCartResponseDto save(ShoppingCartRequestDto requestDto);
+    ShoppingCartResponseDto save(Long authenticationId, CartItemRequestDto requestDto);
 
-    CartItemResponseUpdateDto update(Long cartItemId, CartItemResponseUpdateDto requestDto);
+    ShoppingCartResponseDto update(Long authenticationId, Long cartItemId,
+                                   CartItemUpdateDto updateDto);
 
-    void deleteById(Long id);
+    void deleteById(Long authenticationId, Long id);
 }

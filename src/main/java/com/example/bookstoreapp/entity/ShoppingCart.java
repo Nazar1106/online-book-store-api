@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,12 +31,13 @@ public class ShoppingCart {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", unique = true, nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.PERSIST)
-    private Set<CartItem> cartItems;
+    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
+    private Set<CartItem> cartItems = new HashSet<>();
 
     @Column(name = "is_deleted")
-    private boolean isDelete = false;
+    private boolean isDeleted = false;
 }
