@@ -24,12 +24,6 @@ public interface BookMapper {
             expression = "java(toCategoriesFromIds(createBookRequestDto.getCategoryIds()))")
     Book toEntity(CreateBookRequestDto createBookRequestDto);
 
-    @Mapping(source = "isbn", target = "isbn")
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "author", target = "author")
-    @Mapping(source = "price", target = "price")
-    @Mapping(source = "coverImage", target = "coverImage")
-    @Mapping(source = "description", target = "description")
     @Mapping(target = "categoryIds",
             expression = "java(toCategoryIds(book.getCategories()))")
     BookDto toDto(Book book);
@@ -58,6 +52,6 @@ public interface BookMapper {
     default List<Long> toCategoryIds(Set<Category> categories) {
         return categories.stream()
                 .map(Category::getId)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

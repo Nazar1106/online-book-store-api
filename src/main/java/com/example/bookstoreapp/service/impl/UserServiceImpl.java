@@ -4,13 +4,12 @@ import com.example.bookstoreapp.dto.userdto.UserRegistrationRequestDto;
 import com.example.bookstoreapp.dto.userdto.UserResponseDto;
 import com.example.bookstoreapp.entity.Role;
 import com.example.bookstoreapp.entity.RoleName;
-import com.example.bookstoreapp.entity.ShoppingCart;
 import com.example.bookstoreapp.entity.User;
 import com.example.bookstoreapp.exception.RegistrationException;
 import com.example.bookstoreapp.mapper.UserMapper;
 import com.example.bookstoreapp.repository.role.RoleRepository;
-import com.example.bookstoreapp.repository.shoppingcart.ShoppingCartRepository;
 import com.example.bookstoreapp.repository.user.UserRepository;
+import com.example.bookstoreapp.service.ShoppingCartService;
 import com.example.bookstoreapp.service.UserService;
 import jakarta.transaction.Transactional;
 import java.util.Set;
@@ -27,7 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartService shoppingCartService;
     private final RoleRepository roleRepository;
 
     @Override
@@ -36,18 +35,13 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new RegistrationException(CAN_T_REGISTER_USER_MSG);
         }
-        Role userRole = new Role();
-        userRole.setRole(RoleName.USER);
-        Role getUserRole = roleRepository.getByRole(userRole.getRole());
-        userRole.setId(getUserRole.getId());
+        RoleName user2 = RoleName.USER;
+        Role role = roleRepository.byRoleName(user2);
         User user = userMapper.toModel(requestDto);
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        user.setRoles(Set.of(userRole));
+        user.setRoles(Set.of(role));
         userRepository.save(user);
-        ShoppingCart shoppingCart = new ShoppingCart();
-        shoppingCart.setUser(user);
-        shoppingCartRepository.save(shoppingCart);
-
+        shoppingCartService.saveShoppingCartForUser(user);
         return userMapper.toDto(user);
     }
 }

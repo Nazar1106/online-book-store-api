@@ -3,15 +3,17 @@ package com.example.bookstoreapp.service;
 import com.example.bookstoreapp.dto.cartitemdto.CartItemRequestDto;
 import com.example.bookstoreapp.dto.cartitemdto.CartItemUpdateDto;
 import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartDto;
-import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartResponseDto;
+import com.example.bookstoreapp.entity.User;
 
 public interface ShoppingCartService {
 
     ShoppingCartDto getByUserId(Long authenticationId);
 
-    ShoppingCartResponseDto save(Long authenticationId, CartItemRequestDto requestDto);
+    ShoppingCartDto save(Long authenticationId, CartItemRequestDto requestDto);
 
-    ShoppingCartResponseDto update(Long authenticationId, Long cartItemId,
+    void saveShoppingCartForUser(User user);
+
+    ShoppingCartDto update(Long authenticationId, Long cartItemId,
                                    CartItemUpdateDto updateDto);
 
     void deleteById(Long authenticationId, Long id);
