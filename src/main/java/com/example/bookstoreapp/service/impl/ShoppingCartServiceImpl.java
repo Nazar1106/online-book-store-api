@@ -26,7 +26,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     public static final String CAN_T_GET_USER_BY_ID_MSG = "Can't get user by Id ";
     public static final String CAN_T_FIND_BOOK_BY_ID_MSG = "Can't find book by id ";
-
     public static final String CAN_T_FIND_CART_ITEM_BY_ID_MSG = "Can't find cart item by id ";
     private final ShoppingCartRepository shoppingCartRepository;
     private final UserRepository userRepository;

@@ -35,8 +35,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new RegistrationException(CAN_T_REGISTER_USER_MSG);
         }
-        RoleName user2 = RoleName.USER;
-        Role role = roleRepository.byRoleName(user2);
+        Role role = roleRepository.byRoleName(RoleName.USER);
         User user = userMapper.toModel(requestDto);
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         user.setRoles(Set.of(role));
