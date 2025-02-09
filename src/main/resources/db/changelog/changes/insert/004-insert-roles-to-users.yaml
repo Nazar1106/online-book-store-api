@@ -30,21 +30,3 @@ databaseChangeLog:
               - column:
                   name: role_id
                   value: "2"
-        - insert:
-            tableName: users_roles
-            columns:
-              - column:
-                  name: user_id
-                  value: "4"
-              - column:
-                  name: role_id
-                  value: "2"
-        - insert:
-            tableName: users_roles
-            columns:
-              - column:
-                  name: user_id
-                  value: "5"
-              - column:
-                  name: role_id
-                  value: "1"

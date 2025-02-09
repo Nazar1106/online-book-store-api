@@ -28,5 +28,4 @@ public class UpdateBookDto {
     private String coverImage;
     @NotEmpty
     private List<Long> categoryIds;
-
 }

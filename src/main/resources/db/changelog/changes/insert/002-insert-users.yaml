@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: insert-users
+      id: insert-users-with-shopping-carts
       author: Nazar Kupnovytskyi
       changes:
         - insert:
@@ -11,7 +11,7 @@ databaseChangeLog:
                   value: "john.doe@example.com"
               - column:
                   name: password
-                  valueComputed: "12345678"
+                  value: "$2a$10$MciJPpHrd8psQfrFmYyBc.j2PGf5k9xP/sOrNuT9pUwac6ah9vzw6"
               - column:
                   name: first_name
                   value: "John"
@@ -21,6 +21,7 @@ databaseChangeLog:
               - column:
                   name: shipping_address
                   value: "123 Main St, Springfield, IL"
+
         - insert:
             tableName: users
             columns:
@@ -29,7 +30,7 @@ databaseChangeLog:
                   value: "jane.smith@example.com"
               - column:
                   name: password
-                  valueComputed: "12345678"
+                  value: "$2a$10$MciJPpHrd8psQfrFmYyBc.j2PGf5k9xP/sOrNuT9pUwac6ah9vzw6"
               - column:
                   name: first_name
                   value: "Jane"
@@ -39,6 +40,7 @@ databaseChangeLog:
               - column:
                   name: shipping_address
                   value: "456 Oak St, Lincoln, NE"
+
         - insert:
             tableName: users
             columns:
@@ -47,7 +49,7 @@ databaseChangeLog:
                   value: "alice.jones@example.com"
               - column:
                   name: password
-                  valueComputed: "12345678"
+                  value: "$2a$10$MciJPpHrd8psQfrFmYyBc.j2PGf5k9xP/sOrNuT9pUwac6ah9vzw6"
               - column:
                   name: first_name
                   value: "Alice"
@@ -57,39 +59,3 @@ databaseChangeLog:
               - column:
                   name: shipping_address
                   value: "789 Pine St, Omaha, NE"
-        - insert:
-            tableName: users
-            columns:
-              - column:
-                  name: email
-                  value: "bob.brown@example.com"
-              - column:
-                  name: password
-                  valueComputed: "12345678"
-              - column:
-                  name: first_name
-                  value: "Bob"
-              - column:
-                  name: last_name
-                  value: "Brown"
-              - column:
-                  name: shipping_address
-                  value: "101 Maple St, Des Moines, IA"
-        - insert:
-            tableName: users
-            columns:
-              - column:
-                  name: email
-                  value: "mary.white@example.com"
-              - column:
-                  name: password
-                  valueComputed: "12345678"
-              - column:
-                  name: first_name
-                  value: "Mary"
-              - column:
-                  name: last_name
-                  value: "White"
-              - column:
-                  name: shipping_address
-                  value: "202 Cedar St, Madison, WI"
