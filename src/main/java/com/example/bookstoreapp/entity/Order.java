@@ -38,13 +38,17 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(nullable = false)
     private BigDecimal total;
 
+    @Column(nullable = false)
     private LocalDateTime orderDate;
 
+    @Column(nullable = false)
     private String shippingAddress;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -53,4 +57,3 @@ public class Order {
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 }
-

@@ -1,18 +1,21 @@
 package com.example.bookstoreapp.dto.orderdto;
 
-import com.example.bookstoreapp.dto.orderitemdto.OrderItemSaveDto;
+import com.example.bookstoreapp.dto.orderitemdto.OrderItemDto;
 import com.example.bookstoreapp.entity.Status;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class OrderDto {
+
+    @NotNull
+    private Long id;
 
     @NotNull
     private Long userId;
@@ -29,5 +32,5 @@ public class OrderDto {
     @NotBlank
     private String shippingAddress;
 
-    private List<OrderItemSaveDto> orderItems;
+    private Set<OrderItemDto> orderItems;
 }

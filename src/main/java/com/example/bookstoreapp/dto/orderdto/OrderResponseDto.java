@@ -1,6 +1,6 @@
 package com.example.bookstoreapp.dto.orderdto;
 
-import com.example.bookstoreapp.dto.orderitemdto.OrderItemDto;
+import com.example.bookstoreapp.dto.orderitemdto.OrderItemResponseDto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +15,7 @@ public class OrderResponseDto {
 
     private Long userId;
 
-    private List<OrderItemDto> orderItems;
+    private List<OrderItemResponseDto> orderItems;
 
     private LocalDateTime orderDate;
 
