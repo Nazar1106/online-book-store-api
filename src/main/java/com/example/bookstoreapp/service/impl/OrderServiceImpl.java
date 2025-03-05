@@ -46,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
         if (cart.getCartItems().isEmpty()) {
             throw new OrderProcessingException(CAN_T_PLACE_AN_ORDER + userId);
         }
-        Order order = orderMapper.cartToOrder(cart, orderDto.shippingAddress());
+        Order order = orderMapper.cartToOrder(cart, orderDto.getShippingAddress());
         cart.clearCart();
         return orderMapper.toOrderDto(orderRepository.save(order));
     }
