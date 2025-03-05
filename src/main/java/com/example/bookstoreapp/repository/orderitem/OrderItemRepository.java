@@ -16,10 +16,9 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
             SELECT oi FROM OrderItem oi
             JOIN FETCH oi.order o
             WHERE o.id = :orderId AND o.user.id = :userId""")
-    Page<OrderItem> findByOrderIdAndUserId(
-                                                    @Param("orderId") Long orderId,
-                                                    @Param("userId") Long userId,
-                                                    Pageable pageable);
+    Page<OrderItem> findByOrderIdAndUserId(@Param("orderId") Long orderId,
+                                           @Param("userId") Long userId,
+                                           Pageable pageable);
 
     @Query(value = """
             SELECT oi FROM OrderItem oi

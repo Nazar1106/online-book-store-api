@@ -1,40 +1,42 @@
 package com.example.bookstoreapp.mapper;
 
 import com.example.bookstoreapp.config.MapperConfig;
-import com.example.bookstoreapp.dto.orderdto.OrderDto;
 import com.example.bookstoreapp.dto.orderdto.OrderResponseDto;
-import com.example.bookstoreapp.dto.orderitemdto.OrderItemResponseDto;
+import com.example.bookstoreapp.entity.CartItem;
 import com.example.bookstoreapp.entity.Order;
-import com.example.bookstoreapp.entity.OrderItem;
+import com.example.bookstoreapp.entity.ShoppingCart;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 @Mapper(config = MapperConfig.class, uses = OrderItemMapper.class)
 public interface OrderMapper {
 
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "orderItems", target = "orderItems", qualifiedByName = "mapOrderItems")
-    OrderResponseDto toDto(Order order);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "total", source = "cart.cartItems", qualifiedByName = "total")
+    @Mapping(target = "orderItems", source = "cart.cartItems")
+    Order cartToOrder(ShoppingCart cart, String shippingAddress);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "userId", target = "user.id")
-    Order toModel(OrderDto orderDto);
+    @Mapping(target = "orderDate", dateFormat = "yyyy-MM-dd HH")
+    @Mapping(target = "userId", source = "user.id")
+    OrderResponseDto toOrderDto(Order order);
 
-    List<OrderResponseDto> toDtos(List<Order> orders);
+    List<OrderResponseDto> toOrderDtoList(List<Order> orders);
 
-    @Named(value = "mapOrderItems")
-    default List<OrderItemResponseDto> mapOrderItems(Set<OrderItem> orderItems) {
-        return orderItems.stream()
-                .map(item -> {
-                    OrderItemResponseDto dto = new OrderItemResponseDto();
-                    dto.setId(item.getId());
-                    dto.setBookId(item.getBook().getId());
-                    dto.setQuantity(item.getQuantity());
-                    return dto;
-                })
-                .toList();
+    @AfterMapping
+    default void updateOrder(@MappingTarget Order order) {
+        order.getOrderItems().forEach(oi -> oi.setOrder(order));
+    }
+
+    @Named("total")
+    default BigDecimal getTotal(Set<CartItem> cartItems) {
+        return cartItems.stream()
+                .map(i -> i.getBook().getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

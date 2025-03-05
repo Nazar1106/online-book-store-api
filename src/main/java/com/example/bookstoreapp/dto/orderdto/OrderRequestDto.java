@@ -10,4 +10,8 @@ public class OrderRequestDto {
 
     @NotBlank
     private String shippingAddress;
+
+    public String shippingAddress() {
+        return shippingAddress;
+    }
 }
