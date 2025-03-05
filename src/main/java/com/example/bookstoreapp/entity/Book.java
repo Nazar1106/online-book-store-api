@@ -60,5 +60,4 @@ public class Book {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Category> categories = new HashSet<>();
-
 }

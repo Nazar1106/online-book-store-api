@@ -97,7 +97,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 .findByIdAndShoppingCartId(id, shoppingCart.getId()).orElseThrow(()
                         -> new EntityNotFoundException(CAN_T_FIND_CART_ITEM_BY_ID_MSG + id));
         shoppingCart.getCartItems().remove(cartItem);
-        cartItemRepository.delete(cartItem);
     }
 
     @Override
