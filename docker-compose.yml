@@ -7,8 +7,8 @@ services:
       - MYSQL_DATABASE=$MYSQLDB_DATABASE
       - MYSQL_USER=$MYSQLDB_USER
       - MYSQL_PASSWORD=$MYSQLDB_PASSWORD
-      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD  # Password for root-user. (If I delete it, the containers will stop.)
-                              # I think it's a reason why I received exceptions. Learn about it!
+      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+
     ports:
       - "$MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT"
     healthcheck:
@@ -36,4 +36,3 @@ services:
     ports:
       - "$SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT"
       - "$DEBUG_PORT:$DEBUG_PORT"
-
