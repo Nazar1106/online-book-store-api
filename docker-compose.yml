@@ -32,7 +32,7 @@ services:
         "jwt.expiration": "${JWT_EXPIRATION}",
         "jwt.secret": "${JWT_SECRET}"
       }'
-      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${DEBUG_PORT}"
     ports:
       - "$SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT"
       - "$DEBUG_PORT:$DEBUG_PORT"
