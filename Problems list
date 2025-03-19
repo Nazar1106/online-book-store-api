@@ -1,0 +1,8 @@
+1) I can't see my data in DB because ports. Why?
+   - I can see them, I have searched books, but book shouldn't generate automatically.
+   todo: DONE
+2) My swagger methods don't work correctly. I have found problems in:
+   - Category: My admin can't create new category because Forbidden mistake; Why if I have
+   passed token correctly?
+3) Added appropriate case message to exception handlers and exceptions. Because when I get exception
+I don't know about reason.

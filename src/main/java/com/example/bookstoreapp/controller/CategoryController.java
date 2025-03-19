@@ -42,11 +42,12 @@ public class CategoryController {
 
     private final BookMapper bookMapper;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Create a new category",
             description = "Allows an ADMIN to create a new category in the system",
             security = @SecurityRequirement(name = "bearerAuth"),
-            responses = {@ApiResponse(responseCode = "200",
+            responses = {@ApiResponse(responseCode = "201",
                     description = "Category created successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CategoryResponseDto.class))),
