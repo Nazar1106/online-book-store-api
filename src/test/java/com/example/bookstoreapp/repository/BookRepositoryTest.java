@@ -70,7 +70,7 @@ class BookRepositoryTest {
     @Test
     @DisplayName("Should return books when categoryId exists")
     void findByCategoriesId_CategoryExists_ShouldReturnBooks() {
-        Long existingCategoryId = 1L; // Переконайся, що ця категорія є в БД
+        Long existingCategoryId = 1L;
 
         List<Book> books = bookRepository.findByCategoriesId(existingCategoryId);
 
@@ -81,7 +81,7 @@ class BookRepositoryTest {
     @Test
     @DisplayName("Should return empty list when categoryId does not exist")
     void findByCategoriesId_CategoryDoesNotExist_ShouldReturnEmptyList() {
-        Long nonExistingCategoryId = 999L; // ID, якого немає в БД
+        Long nonExistingCategoryId = 999L;
 
         List<Book> books = bookRepository.findByCategoriesId(nonExistingCategoryId);
 
