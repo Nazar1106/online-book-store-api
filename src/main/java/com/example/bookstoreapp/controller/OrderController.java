@@ -7,11 +7,6 @@ import com.example.bookstoreapp.dto.orderitemdto.OrderItemResponseDto;
 import com.example.bookstoreapp.entity.User;
 import com.example.bookstoreapp.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -58,7 +53,8 @@ public class OrderController {
                     + "Only users with 'USER' authority can access this endpoint. "
                     + "The order history is paginated and can be sorted based "
                     + "on the request parameters."
-                    + "The sorting criteria should be specified in the format: 'sort: field,(ASC||DESC)'"
+                    + "The sorting criteria should be specified in the format: "
+                    + "'sort: field,(ASC||DESC)'"
     )
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping
