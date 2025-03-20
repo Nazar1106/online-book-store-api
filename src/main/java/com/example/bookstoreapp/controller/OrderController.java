@@ -7,11 +7,6 @@ import com.example.bookstoreapp.dto.orderitemdto.OrderItemResponseDto;
 import com.example.bookstoreapp.entity.User;
 import com.example.bookstoreapp.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -38,20 +33,12 @@ public class OrderController {
 
     @Operation(
             summary = "Place an order",
-            description = "Allows a user to place an order for books in "
-                    + "their shopping cart. Only users with "
-                    + "'USER' authority can perform this action."
+            description = "Allows a user to place an order for books in their shopping cart. "
+                    + "The user is identified through their authentication details. "
+                    + "Only users with 'USER' authority can perform this action. "
+                    + "Upon successful order placement, an order response is returned "
+                    + "with the details of the order."
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Order placed successfully",
-                    content = @Content(schema = @Schema(implementation = OrderResponseDto.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "Invalid request data"),
-            @ApiResponse(responseCode = "401",
-                    description = "Unauthorized - User must be authenticated"),
-            @ApiResponse(responseCode = "403",
-                    description = "Forbidden - User does not have permission"),
-    })
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping
     public OrderResponseDto createOrder(Authentication authentication,
@@ -63,19 +50,11 @@ public class OrderController {
     @Operation(
             summary = "Get order history",
             description = "Retrieves a paginated list of past orders for the authenticated user. "
-                    + "Only users with 'USER' authority can access this."
+                    + "Only users with 'USER' authority can access this endpoint. "
+                    + "The order history is paginated and can be sorted based "
+                    + "on the request parameters."
+            + "The sorting criteria should be specified in the format: 'sort: field,(ASC||DESC)'"
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Order history retrieved successfully",
-                    content = @Content(array = @ArraySchema(schema =
-                    @Schema(implementation = OrderResponseDto.class)))),
-            @ApiResponse(responseCode = "400",
-                    description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "401",
-                    description = "Unauthorized - User must be authenticated"),
-            @ApiResponse(responseCode = "403",
-                    description = "Forbidden - User does not have permission"),
-    })
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping
     public List<OrderResponseDto> getUserOrderHistory(Authentication authentication,
@@ -89,20 +68,6 @@ public class OrderController {
             description = "Allows an admin to update the status of an order. "
                     + "Only users with 'ADMIN' authority can perform this action."
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Order status updated successfully",
-                    content = @Content(schema = @Schema(implementation = OrderUpdateDto.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "Invalid request data"),
-            @ApiResponse(responseCode = "401",
-                    description = "Unauthorized - User must be authenticated"),
-            @ApiResponse(responseCode = "403",
-                    description = "Forbidden - User does not have ADMIN permissions"),
-            @ApiResponse(responseCode = "404",
-                    description = "Order not found"),
-            @ApiResponse(responseCode = "500",
-                    description = "Internal server error")
-    })
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("{id}")
     public OrderUpdateDto updateOrderStatus(Authentication authentication, @PathVariable Long id,
@@ -115,20 +80,9 @@ public class OrderController {
             summary = "Get all order items by order ID",
             description = "Retrieves a paginated list of items for a specific order. "
                     + "Only users with 'USER' authority can access this."
+                    + "The sorting criteria should be specified in the format: "
+                    + "'sort: field,(ASC||DESC)'"
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Order items retrieved successfully",
-                    content = @Content(array = @ArraySchema(
-                            schema = @Schema(implementation = OrderItemResponseDto.class)))),
-            @ApiResponse(responseCode = "400",
-                    description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "401",
-                    description = "Unauthorized - User must be authenticated"),
-            @ApiResponse(responseCode = "403",
-                    description = "Forbidden - User does not have permission"),
-            @ApiResponse(responseCode = "404",
-                    description = "Order not found"),
-    })
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("{orderId}/items")
     public Page<OrderItemResponseDto> getOrderItems(Authentication authentication,
@@ -143,20 +97,6 @@ public class OrderController {
             description = "Retrieves details of a specific item within an order. "
                     + "Only users with 'USER' authority can access this."
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200",
-                    description = "Order item retrieved successfully",
-                    content = @Content(schema =
-                    @Schema(implementation = OrderItemResponseDto.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "401",
-                    description = "Unauthorized - User must be authenticated"),
-            @ApiResponse(responseCode = "403",
-                    description = "Forbidden - User does not have permission"),
-            @ApiResponse(responseCode = "404",
-                    description = "Order or OrderItem not found"),
-    })
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/{orderId}/items/{id}")
     public OrderItemResponseDto getOrderItem(Authentication authentication,

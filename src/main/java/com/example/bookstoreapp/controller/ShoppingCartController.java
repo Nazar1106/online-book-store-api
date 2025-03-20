@@ -7,11 +7,6 @@ import com.example.bookstoreapp.entity.User;
 import com.example.bookstoreapp.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,79 +31,43 @@ public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;
 
-    @PreAuthorize("hasAuthority('USER')")
-    @GetMapping
     @Operation(
             summary = "Get shopping cart of the authenticated user",
-            description = "Retrieves the shopping cart for the currently "
-                    + "authenticated user based on their authentication details.",
-            security = @SecurityRequirement(name = "bearerAuth")
+            description = "Retrieves the shopping cart of the currently authenticated user, "
+                    + "using their authentication details to fetch the cart. "
+                    + "Only users with 'USER' authority can access this endpoint."
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200",
-                    description = "Shopping cart retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = ShoppingCartDto.class))),
-            @ApiResponse(responseCode = "401",
-                    description = "Unauthorized - User must be authenticated"),
-            @ApiResponse(responseCode = "403",
-                    description = "Forbidden - User lacks required permissions"),
-            @ApiResponse(responseCode = "404",
-                    description = "Shopping cart not found for the user"),
-    })
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping
     public ShoppingCartDto getByUserId(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return shoppingCartService.getByUserId(user.getId());
     }
 
-    @PreAuthorize("hasAuthority('USER')")
-    @PostMapping
     @Operation(
             summary = "Add item to shopping cart",
-            description = "Adds an item to the shopping cart of the authenticated user. "
-                    + "The user is identified through authentication.",
-            security = @SecurityRequirement(name = "bearerAuth")
+            description = "Adds a specified item to the shopping cart of "
+                    + "the currently authenticated user. "
+                    + "The user is identified via their authentication details. "
+                    + "Only users with 'USER' authority can access this endpoint."
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "201",
-                    description = "Item successfully added to the shopping cart",
-                    content =
-                    @Content(schema = @Schema(implementation = ShoppingCartDto.class))),
-            @ApiResponse(responseCode = "400",
-                    description = "Invalid request data"),
-            @ApiResponse(responseCode = "401",
-                    description = "Unauthorized - User must be authenticated"),
-            @ApiResponse(responseCode = "403",
-                    description = "Forbidden - User lacks required permissions"),
-    })
+    @PreAuthorize("hasAuthority('USER')")
+    @PostMapping
     public ShoppingCartDto save(Authentication authentication,
                                         @RequestBody @Valid CartItemRequestDto requestDto) {
         User user = (User) authentication.getPrincipal();
         return shoppingCartService.save(user.getId(),requestDto);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
-    @PutMapping("/items/{cartItemId}")
     @Operation(
             summary = "Update item in shopping cart",
-            description = "Updates the quantity or details of an item in the "
-                    + "authenticated user's shopping cart."
-                    + "The user is identified through authentication.",
-            security = @SecurityRequirement(name = "bearerAuth"),
-            responses = {
-                    @ApiResponse(responseCode = "200",
-                            description = "Item updated successfully",
-                            content = @Content(schema =
-                            @Schema(implementation = ShoppingCartDto.class))),
-                    @ApiResponse(responseCode = "400",
-                            description = "Invalid input data"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Unauthorized - User must be authenticated"),
-                    @ApiResponse(responseCode = "403",
-                            description = "Forbidden - User lacks required permissions"),
-                    @ApiResponse(responseCode = "404",
-                            description = "Item not found"),
-            }
+            description = "Updates the quantity or details of an item in the currently "
+                    + "authenticated user's shopping cart. "
+                    + "The user is identified via their authentication details. "
+                    + "Only users with 'USER' authority can access this endpoint."
     )
+    @PreAuthorize("hasAuthority('USER')")
+    @PutMapping("/items/{cartItemId}")
     public ShoppingCartDto update(Authentication authentication,
                                           @Parameter(
                                                   description = "ID of the cart item to be updated")
@@ -118,26 +77,17 @@ public class ShoppingCartController {
         return shoppingCartService.update(user.getId(), cartItemId, updateDto);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority('USER')")
-    @DeleteMapping("/items/{cartItemId}")
     @Operation(
             summary = "Remove item from shopping cart",
             description = "Deletes an item from the authenticated user's shopping cart. "
-                    + "The user is identified through authentication. "
-                    + "Returns no content on success.",
-            security = @SecurityRequirement(name = "bearerAuth")
+                    + "The user is identified through their authentication details. "
+                    + "Upon successful removal, the response contains "
+                    + "no content (HTTP status 204). "
+                    + "Only users with 'USER' authority can access this endpoint."
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "204",
-                    description = "Item successfully removed from the shopping cart"),
-            @ApiResponse(responseCode = "401",
-                    description = "Unauthorized - User must be authenticated"),
-            @ApiResponse(responseCode = "403",
-                    description = "Forbidden - User lacks required permissions"),
-            @ApiResponse(responseCode = "404",
-                    description = "Item not found"),
-    })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('USER')")
+    @DeleteMapping("/items/{cartItemId}")
     public void deleteById(Authentication authentication, @PathVariable Long cartItemId) {
         User user = (User) authentication.getPrincipal();
         shoppingCartService.deleteById(user.getId(), cartItemId);
