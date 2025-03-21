@@ -1,5 +1,8 @@
 package com.example.bookstoreapp.controller;
 
+import static com.example.bookstoreapp.controller.TestUtil.creatBookRequestDto;
+import static com.example.bookstoreapp.controller.TestUtil.createExpectedBookDto;
+import static com.example.bookstoreapp.controller.TestUtil.getBookDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -18,7 +21,6 @@ import java.sql.SQLException;
 import java.util.List;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -130,8 +132,6 @@ class BookControllerTest {
 
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
-        System.out.println("JSON request: " + jsonRequest);
-
         MvcResult result = mockMvc.perform(put("/books/{id}", testId)
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -172,57 +172,6 @@ class BookControllerTest {
                 result.getResponse().getContentAsString(), BookDto.class);
 
         verifyBookDtoEquality(expectedDto, resultDto);
-    }
-
-    @NotNull
-    private static BookDto getBookDto(Long testId) {
-        String testTitle = "NewBookTitle1";
-        String testAuthor = "NewBookAuthor1";
-        String testIsbn = "NewBookIsbn1";
-        String testDescription = "NewBookDescription1";
-        String testCoverImage = "NewCoverImage1";
-        List<Long> testCategoryIds = List.of(1L);
-        BigDecimal testPrice = BigDecimal.valueOf(150);
-
-        BookDto expectedDto = new BookDto();
-        expectedDto.setId(testId);
-        expectedDto.setTitle(testTitle);
-        expectedDto.setAuthor(testAuthor);
-        expectedDto.setIsbn(testIsbn);
-        expectedDto.setDescription(testDescription);
-        expectedDto.setCoverImage(testCoverImage);
-        expectedDto.setCategoryIds(testCategoryIds);
-        expectedDto.setPrice(testPrice);
-        return expectedDto;
-    }
-
-    private CreateBookRequestDto creatBookRequestDto(
-            String title, String author, String isbn, String description,
-            String coverImage, List<Long> categoryIds, BigDecimal price) {
-        CreateBookRequestDto requestDto = new CreateBookRequestDto();
-        requestDto.setTitle(title);
-        requestDto.setAuthor(author);
-        requestDto.setIsbn(isbn);
-        requestDto.setDescription(description);
-        requestDto.setCoverImage(coverImage);
-        requestDto.setCategoryIds(categoryIds);
-        requestDto.setPrice(price);
-        return requestDto;
-    }
-
-    private BookDto createExpectedBookDto(
-            Long id, String title, String author, String isbn, String description,
-            String coverImagine, List<Long> categoryIds, BigDecimal price) {
-        BookDto expectedDto = new BookDto();
-        expectedDto.setId(id);
-        expectedDto.setTitle(title);
-        expectedDto.setAuthor(author);
-        expectedDto.setIsbn(isbn);
-        expectedDto.setDescription(description);
-        expectedDto.setCoverImage(coverImagine);
-        expectedDto.setCategoryIds(categoryIds);
-        expectedDto.setPrice(price);
-        return expectedDto;
     }
 
     private void verifyBookDtoEquality(BookDto expected, BookDto actual) {

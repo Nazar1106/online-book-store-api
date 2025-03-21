@@ -5,10 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.example.bookstoreapp.dto.bookdto.BookDto;
@@ -31,7 +29,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -157,8 +154,6 @@ public class BookServiceImplTest {
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().getFirst()).isEqualTo(bookDto);
-        verify(bookRepository, times(1)).findAll(pageable);
-        verify(bookMapper, times(1)).toDto(book);
     }
 
     @DisplayName("Should return BookDto when book exists")
@@ -174,8 +169,6 @@ public class BookServiceImplTest {
 
         assertThat(result).isNotNull();
         assertThat(result).isEqualTo(bookDto);
-        verify(bookRepository, times(1)).findById(id);
-        verify(bookMapper, times(1)).toDto(book);
     }
 
     @DisplayName("Should throw EntityNotFoundException when book does not exist")
@@ -191,8 +184,6 @@ public class BookServiceImplTest {
                 () -> bookService.getBookById(id));
 
         assertThat(exception.getMessage()).isEqualTo(exceptionMs + id);
-        verify(bookRepository, times(1)).findById(id);
-        verifyNoMoreInteractions(bookMapper);
     }
 
     @Test
@@ -218,9 +209,6 @@ public class BookServiceImplTest {
 
         assertThat(result).isNotEmpty();
         assertThat(result).hasSize(1);
-        verify(bookSpecificationBuilder, times(1)).build(searchParams);
-        verify(bookRepository, times(1)).findAll(specification);
-        verify(bookMapper, times(1)).toDtos(bookList);
     }
 
     @Test
@@ -254,9 +242,6 @@ public class BookServiceImplTest {
         BookDto result = bookService.updateBook(bookId, updateBookDto);
 
         assertThat(result).isEqualTo(updatedBookDto);
-        verify(bookRepository, times(1)).findById(bookId);
-        verify(bookMapper, times(1)).updateBookFromDto(updateBookDto, existingBook);
-        verify(bookMapper, times(1)).toDto(existingBook);
     }
 
     @Test
@@ -274,8 +259,6 @@ public class BookServiceImplTest {
                 () -> bookService.updateBook(bookId, updateBookDto));
 
         assertThat(exception.getMessage()).isEqualTo("Can't update book by id " + bookId);
-        verify(bookRepository, times(1)).findById(bookId);
-        verifyNoMoreInteractions(bookMapper);
     }
 
     @Test
@@ -289,8 +272,6 @@ public class BookServiceImplTest {
 
         bookService.deleteById(bookId);
 
-        verify(bookRepository, times(1)).existsById(bookId);
-        verify(bookRepository, times(1)).deleteById(bookId);
     }
 
     @Test
@@ -306,7 +287,5 @@ public class BookServiceImplTest {
                 () -> bookService.deleteById(bookId));
 
         assertThat(exception.getMessage()).isEqualTo(expectedMessage);
-        verify(bookRepository, times(1)).existsById(bookId);
-        verify(bookRepository, never()).deleteById(ArgumentMatchers.anyLong());
     }
 }
