@@ -18,7 +18,6 @@ import org.mapstruct.MappingTarget;
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "deleted", constant = "false")
     @Mapping(target = "categories",
             expression = "java(toCategoriesFromIds(createBookRequestDto.getCategoryIds()))")
