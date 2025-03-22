@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-    private static final String CAN_T_FIND_CATEGORY_BY_ID_MSG = "can't find Category by id ";
+    private static final String CAN_T_FIND_CATEGORY_BY_ID_MSG = "Can't find category by id ";
 
     private final CategoryRepository categoryRepository;
 
