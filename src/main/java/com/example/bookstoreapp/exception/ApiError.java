@@ -2,5 +2,5 @@ package com.example.bookstoreapp.exception;
 
 import java.time.ZonedDateTime;
 
-public record ApiError(String message, ZonedDateTime dateTime) {
+public record ApiError(String errorType,String message, ZonedDateTime dateTime) {
 }
