@@ -3,8 +3,10 @@ package com.example.bookstoreapp.controller;
 import static com.example.bookstoreapp.BookUtil.creatBookRequestDto;
 import static com.example.bookstoreapp.BookUtil.createExpectedBookDto;
 import static com.example.bookstoreapp.BookUtil.getBookDto;
+import static com.example.bookstoreapp.BookUtil.getInvalidCreateBookRequestDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -15,10 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.bookstoreapp.dto.bookdto.BookDto;
 import com.example.bookstoreapp.dto.bookdto.CreateBookRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class BookControllerTest {
+class BookControllerIntegrationTest {
     private static final String INSERT_BOOKS_SCRIPT_PATH =
             "database/books/insert-books-with-categories-to-db.sql";
     private static final String INSERT_CATEGORIES_SCRIPT_PATH =
@@ -78,22 +78,9 @@ class BookControllerTest {
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void createBook_ValidData_ShouldReturnCreatedBookDto() throws Exception {
         Long testId = 4L;
-        String testTitle = "title";
-        String testAuthor = "author";
-        String testIsbn = "isbn";
-        String description = "description";
-        String coverImage = "coverImage";
 
-        List<Long> testCategoryIds = List.of(1L, 1L);
-        BigDecimal testPrice = BigDecimal.valueOf(1.5);
-
-        BookDto expectedDto = createExpectedBookDto(
-                testId, testTitle, testAuthor, testIsbn, description,
-                coverImage, testCategoryIds, testPrice);
-
-        CreateBookRequestDto requestDto = creatBookRequestDto(
-                testTitle, testAuthor, testIsbn, description,
-                coverImage, testCategoryIds, testPrice);
+        BookDto expectedDto = createExpectedBookDto(testId);
+        CreateBookRequestDto requestDto = creatBookRequestDto();
 
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
@@ -110,61 +97,34 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("Create book with valid data")
+    @DisplayName("Create book with invalid data")
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void createBook_NotValidData_ShouldReturnException() throws Exception {
-        Long testId = 4L;
-        String testIsbn = "isbn";
-        String description = "description";
-        String coverImage = "coverImage";
-
-        List<Long> testCategoryIds = List.of(1L, 1L);
-        BigDecimal testPrice = BigDecimal.valueOf(1.5);
-
-        BookDto expectedDto = createExpectedBookDto(
-                testId, null, null, testIsbn, description,
-                coverImage, testCategoryIds, testPrice);
-
-        CreateBookRequestDto requestDto = creatBookRequestDto(
-                null, null, testIsbn, description,
-                coverImage, testCategoryIds, testPrice);
+        CreateBookRequestDto requestDto = getInvalidCreateBookRequestDto();
 
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult result = mockMvc.perform(post("/books")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
+                .andExpect(status().isBadRequest())
                 .andReturn();
 
-        BookDto resultDto = objectMapper.readValue(
-                result.getResponse().getContentAsString(), BookDto.class);
+        String responseContent = result.getResponse().getContentAsString();
 
-        verifyBookDtoEquality(expectedDto, resultDto);
+        assertTrue(responseContent.contains("price must be greater than 0"),
+                "Expected validation message for price");
     }
-
 
     @Test
     @DisplayName("Update book with valid data")
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void updateBook_ValidData_ShouldReturnUpdatedBookDto() throws Exception {
         Long testId = 1L;
-        String updateTitle = "updateTile";
-        String updateAuthor = "updateAuthor";
-        String updateIsbn = "updateIsbn";
-        String updateDescription = "updateDescription";
-        String updateCoverImage = "updateCoverImage";
-
-        List<Long> updateCategoryIds = List.of(1L);
-        BigDecimal updatePrice = BigDecimal.valueOf(1.5);
 
         BookDto expectedDto = createExpectedBookDto(
-                testId, updateTitle, updateAuthor, updateIsbn, updateDescription,
-                updateCoverImage, updateCategoryIds, updatePrice);
-
-        CreateBookRequestDto requestDto = creatBookRequestDto(
-                updateTitle, updateAuthor, updateIsbn, updateDescription,
-                updateCoverImage, updateCategoryIds, updatePrice);
+                testId);
+        CreateBookRequestDto requestDto = creatBookRequestDto();
 
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
@@ -181,6 +141,26 @@ class BookControllerTest {
     }
 
     @Test
+    @DisplayName("Update book with invalid ID")
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
+    void updateBook_InvalidId_ShouldReturnNotFound() throws Exception {
+        Long invalidId = 999L;
+
+        CreateBookRequestDto requestDto = creatBookRequestDto();
+
+        String jsonRequest = objectMapper.writeValueAsString(requestDto);
+
+        MvcResult result = mockMvc.perform(put("/books/{id}", invalidId)
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound()).andReturn();
+
+        String responseContent = result.getResponse().getContentAsString();
+
+        assertTrue(responseContent.contains("Can't update book by id " + invalidId));
+    }
+
+    @Test
     @DisplayName("Delete book by valid id")
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void deleteBook_ById_ShouldReturnNoContent() throws Exception {
@@ -190,6 +170,17 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andReturn();
+    }
+
+    @Test
+    @DisplayName("Delete book with invalid ID")
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
+    void deleteBook_InvalidId_ShouldReturnNotFound() throws Exception {
+        Long invalidId = 999L;
+
+        mockMvc.perform(delete("/books/{id}", invalidId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -210,7 +201,16 @@ class BookControllerTest {
         verifyBookDtoEquality(expectedDto, resultDto);
     }
 
+    @Test
+    @DisplayName("Get book with invalid ID")
+    @WithMockUser(username = "user", authorities = {"USER"})
+    void getBook_ByInvalidId_ShouldReturnNotFound() throws Exception {
+        Long invalidId = 999L;
 
+        mockMvc.perform(get("/books/{id}", invalidId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 
     private void verifyBookDtoEquality(BookDto expected, BookDto actual) {
         assertNotNull(actual);

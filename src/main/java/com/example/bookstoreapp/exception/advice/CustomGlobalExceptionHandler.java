@@ -6,7 +6,6 @@ import com.example.bookstoreapp.exception.OrderProcessingException;
 import com.example.bookstoreapp.exception.RegistrationException;
 import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +30,13 @@ public class CustomGlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidationException(MethodArgumentNotValidException ex) {
-        String collect = ex.getBindingResult().getFieldErrors().stream()
-                .map((DefaultMessageSourceResolvable::getDefaultMessage))
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .map((e) -> e.getField() + " " + e.getDefaultMessage())
                 .collect(Collectors.joining());
 
         ApiError apiError = new ApiError(
                 VALIDATION_EXCEPTION_MSG,
-                collect,
+                message,
                 ZonedDateTime.now()
         );
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);

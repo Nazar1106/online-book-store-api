@@ -9,6 +9,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.bookstoreapp.CategoryUtil;
 import com.example.bookstoreapp.dto.categorydto.CategoryRequestDto;
 import com.example.bookstoreapp.dto.categorydto.CategoryResponseDto;
 import com.example.bookstoreapp.entity.Category;
@@ -57,31 +58,13 @@ class CategoryServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        category = new Category();
-        category.setId(1L);
-        category.setName("Fiction");
-        category.setDescription("Fictional books");
-        category.setDeleted(false);
+        category = CategoryUtil.createCategory();
+        category2 = CategoryUtil.createCategory();
 
-        category2 = new Category();
-        category2.setId(2L);
-        category2.setName("Science");
-        category2.setDescription("Science books");
-        category2.setDeleted(false);
+        responseDto = CategoryUtil.createCategoryResponseDto(category);
+        responseDto2 = CategoryUtil.createCategoryResponseDto(category2);
 
-        responseDto = new CategoryResponseDto();
-        responseDto.setName(category.getName());
-        responseDto.setDescription(category.getDescription());
-        responseDto.setId(category.getId());
-
-        responseDto2 = new CategoryResponseDto();
-        responseDto2.setName(category2.getName());
-        responseDto2.setDescription(category2.getDescription());
-        responseDto2.setId(category2.getId());
-
-        requestDto = new CategoryRequestDto();
-        requestDto.setName("Updated Fiction");
-        requestDto.setDescription("Updated description");
+        requestDto = CategoryUtil.updateCategoryRequestDto();
     }
 
     @Test
@@ -136,7 +119,7 @@ class CategoryServiceImplTest {
     void getById_WithNonExistingId_ShouldThrowException() {
 
         Long categoryId = 99L;
-        String expectedMessage = "can't find Category by id " + categoryId;
+        String expectedMessage = "Can't find category by id " + categoryId;
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
 
@@ -215,7 +198,7 @@ class CategoryServiceImplTest {
     void update_WithNonExistingId_ShouldThrowException() {
 
         Long categoryId = 99L;
-        String expectedMessage = "can't find Category by id " + categoryId;
+        String expectedMessage = "Can't find category by id " + categoryId;
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
 
@@ -250,7 +233,7 @@ class CategoryServiceImplTest {
     void deleteById_WithNonExistingId_ShouldThrowException() {
 
         Long categoryId = 99L;
-        String expectedMessage = "can't find Category by id " + categoryId;
+        String expectedMessage = "Can't find category by id " + categoryId;
 
         when(categoryRepository.existsById(categoryId)).thenReturn(false);
 
