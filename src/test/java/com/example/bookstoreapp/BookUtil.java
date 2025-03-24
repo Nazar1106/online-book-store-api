@@ -1,11 +1,12 @@
-package com.example.bookstoreapp.controller;
+package com.example.bookstoreapp;
 
 import com.example.bookstoreapp.dto.bookdto.BookDto;
 import com.example.bookstoreapp.dto.bookdto.CreateBookRequestDto;
+
 import java.math.BigDecimal;
 import java.util.List;
 
-public class TestUtil {
+public class BookUtil {
 
     public static BookDto getBookDto(Long testId) {
         String testTitle = "NewBookTitle1";

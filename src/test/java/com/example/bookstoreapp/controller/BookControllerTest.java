@@ -1,8 +1,8 @@
 package com.example.bookstoreapp.controller;
 
-import static com.example.bookstoreapp.controller.TestUtil.creatBookRequestDto;
-import static com.example.bookstoreapp.controller.TestUtil.createExpectedBookDto;
-import static com.example.bookstoreapp.controller.TestUtil.getBookDto;
+import static com.example.bookstoreapp.BookUtil.creatBookRequestDto;
+import static com.example.bookstoreapp.BookUtil.createExpectedBookDto;
+import static com.example.bookstoreapp.BookUtil.getBookDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -110,6 +110,41 @@ class BookControllerTest {
     }
 
     @Test
+    @DisplayName("Create book with valid data")
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
+    void createBook_NotValidData_ShouldReturnException() throws Exception {
+        Long testId = 4L;
+        String testIsbn = "isbn";
+        String description = "description";
+        String coverImage = "coverImage";
+
+        List<Long> testCategoryIds = List.of(1L, 1L);
+        BigDecimal testPrice = BigDecimal.valueOf(1.5);
+
+        BookDto expectedDto = createExpectedBookDto(
+                testId, null, null, testIsbn, description,
+                coverImage, testCategoryIds, testPrice);
+
+        CreateBookRequestDto requestDto = creatBookRequestDto(
+                null, null, testIsbn, description,
+                coverImage, testCategoryIds, testPrice);
+
+        String jsonRequest = objectMapper.writeValueAsString(requestDto);
+
+        MvcResult result = mockMvc.perform(post("/books")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        BookDto resultDto = objectMapper.readValue(
+                result.getResponse().getContentAsString(), BookDto.class);
+
+        verifyBookDtoEquality(expectedDto, resultDto);
+    }
+
+
+    @Test
     @DisplayName("Update book with valid data")
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void updateBook_ValidData_ShouldReturnUpdatedBookDto() throws Exception {
@@ -119,6 +154,7 @@ class BookControllerTest {
         String updateIsbn = "updateIsbn";
         String updateDescription = "updateDescription";
         String updateCoverImage = "updateCoverImage";
+
         List<Long> updateCategoryIds = List.of(1L);
         BigDecimal updatePrice = BigDecimal.valueOf(1.5);
 
@@ -173,6 +209,8 @@ class BookControllerTest {
 
         verifyBookDtoEquality(expectedDto, resultDto);
     }
+
+
 
     private void verifyBookDtoEquality(BookDto expected, BookDto actual) {
         assertNotNull(actual);
