@@ -16,6 +16,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class CategoryRepositoryTest {
@@ -27,6 +30,16 @@ class CategoryRepositoryTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @BeforeAll
+    static void beforeAll(@Autowired DataSource dataSource) throws SQLException {
+        teardown(dataSource);
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(true);
+            ScriptUtils.executeSqlScript(connection,
+                    new ClassPathResource(INSERT_CATEGORIES_SCRIPT_PATH));
+        }
+    }
+
     @Test
     @DisplayName("Should return true when category exists by ID")
     public void existById_CategoryExist_ReturnTrue() {
@@ -34,7 +47,7 @@ class CategoryRepositoryTest {
 
         boolean exists = categoryRepository.existsById(existingCategoryId);
 
-        Assertions.assertTrue(exists, "Category with ID " + existingCategoryId
+        assertTrue(exists, "Category with ID " + existingCategoryId
                 + " should exist in the database.");
     }
 
@@ -45,18 +58,8 @@ class CategoryRepositoryTest {
 
         boolean exists = categoryRepository.existsById(nonExistingCategoryId);
 
-        Assertions.assertFalse(exists, "Category with ID " + nonExistingCategoryId
+        assertFalse(exists, "Category with ID " + nonExistingCategoryId
                 + " should not exist in the database.");
-    }
-
-    @BeforeAll
-    static void beforeAll(@Autowired DataSource dataSource) throws SQLException {
-        teardown(dataSource);
-        try (Connection connection = dataSource.getConnection()) {
-            connection.setAutoCommit(true);
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(INSERT_CATEGORIES_SCRIPT_PATH));
-        }
     }
 
     @AfterAll
