@@ -80,8 +80,6 @@ class CategoryServiceImplTest {
         Page<Category> categoryPage = new PageImpl<>(categories, pageable, categories.size());
 
         when(categoryRepository.findAll(pageable)).thenReturn(categoryPage);
-        when(categoryMapper.toDto(category)).thenReturn(responseDto);
-        when(categoryMapper.toDto(category2)).thenReturn(responseDto2);
 
         Page<CategoryResponseDto> result = categoryService.findAll(pageable);
 

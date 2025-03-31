@@ -15,27 +15,7 @@ import org.springframework.data.domain.Sort;
 
 public class BookUtil {
 
-    public static CreateBookRequestDto createBookRequestDto() {
-        CreateBookRequestDto requestDto = new CreateBookRequestDto();
-        requestDto.setTitle("The !!! Gatsby");
-        requestDto.setAuthor("F. Scott Fitzgerald");
-        requestDto.setIsbn("97807433273562");
-        requestDto.setPrice(BigDecimal.valueOf(16));
-        requestDto.setDescription("A novel about the American dream and the tragedy of Jay Gatsby");
-        requestDto.setCoverImage("great_gatsby.jpg");
-
-        Category category = new Category();
-        category.setId(1L);
-        category.setName("Non fiction book");
-        category.setDescription("Description");
-        category.setDeleted(false);
-        requestDto.setCategoryIds(List.of(1L));
-        requestDto.setCategoryIds(List.of(category.getId()));
-
-        return requestDto;
-    }
-
-    public static Book createBook(CreateBookRequestDto requestDto) {
+    public static Book getBook(CreateBookRequestDto requestDto) {
         Book book = new Book();
         book.setId(1L);
         book.setTitle(requestDto.getTitle());
@@ -55,27 +35,24 @@ public class BookUtil {
         return book;
     }
 
-    public static BookDto createBookDto(Book book) {
-        BookDto bookDto = new BookDto();
-        bookDto.setId(book.getId());
-        bookDto.setTitle(book.getTitle());
-        bookDto.setAuthor(book.getAuthor());
-        bookDto.setIsbn(book.getIsbn());
-        bookDto.setPrice(book.getPrice());
-        bookDto.setDescription(book.getDescription());
-        bookDto.setCoverImage(book.getCoverImage());
-        bookDto.setCategoryIds(List.of(1L));
+    public static Book getBook() {
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Test title");
+        book.setAuthor("Test author");
+        book.setIsbn("Test isbn");
+        book.setPrice(BigDecimal.valueOf(10));
+        book.setDescription("Test description");
+        book.setCoverImage("Test imagine");
 
-        return bookDto;
-    }
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Test category name");
+        category.setDescription("Test description");
+        category.setDeleted(false);
+        book.setCategories(Set.of(category));
 
-    public static Pageable createPageable() {
-        return PageRequest.of(0, 10, Sort.by("title"));
-    }
-
-    public static Page<Book> createBookPage(Pageable pageable) {
-        Book book = createBook(createBookRequestDto());
-        return new PageImpl<>(List.of(book), pageable, 1);
+        return book;
     }
 
     public static BookDto getBookDto(Long testId) {
@@ -97,6 +74,49 @@ public class BookUtil {
         expectedDto.setCategoryIds(testCategoryIds);
         expectedDto.setPrice(testPrice);
         return expectedDto;
+    }
+
+    public static BookDto createBookDto(Book book) {
+        BookDto bookDto = new BookDto();
+        bookDto.setId(book.getId());
+        bookDto.setTitle(book.getTitle());
+        bookDto.setAuthor(book.getAuthor());
+        bookDto.setIsbn(book.getIsbn());
+        bookDto.setPrice(book.getPrice());
+        bookDto.setDescription(book.getDescription());
+        bookDto.setCoverImage(book.getCoverImage());
+        bookDto.setCategoryIds(List.of(1L));
+
+        return bookDto;
+    }
+
+    public static CreateBookRequestDto createBookRequestDto() {
+        CreateBookRequestDto requestDto = new CreateBookRequestDto();
+        requestDto.setTitle("The !!! Gatsby");
+        requestDto.setAuthor("F. Scott Fitzgerald");
+        requestDto.setIsbn("97807433273562");
+        requestDto.setPrice(BigDecimal.valueOf(16));
+        requestDto.setDescription("A novel about the American dream and the tragedy of Jay Gatsby");
+        requestDto.setCoverImage("great_gatsby.jpg");
+
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Non fiction book");
+        category.setDescription("Description");
+        category.setDeleted(false);
+        requestDto.setCategoryIds(List.of(1L));
+        requestDto.setCategoryIds(List.of(category.getId()));
+
+        return requestDto;
+    }
+
+    public static Pageable createPageable() {
+        return PageRequest.of(0, 10, Sort.by("title"));
+    }
+
+    public static Page<Book> createBookPage(Pageable pageable) {
+        Book book = getBook(createBookRequestDto());
+        return new PageImpl<>(List.of(book), pageable, 1);
     }
 
     public static CreateBookRequestDto creatBookRequestDto() {

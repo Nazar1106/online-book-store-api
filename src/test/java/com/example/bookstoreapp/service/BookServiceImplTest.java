@@ -58,7 +58,7 @@ public class BookServiceImplTest {
     @BeforeEach
     public void setUp() {
         requestDto = BookUtil.createBookRequestDto();
-        book = BookUtil.createBook(requestDto);
+        book = BookUtil.getBook(requestDto);
         bookDto = BookUtil.createBookDto(book);
         pageable = BookUtil.createPageable();
         bookPage = BookUtil.createBookPage(pageable);
