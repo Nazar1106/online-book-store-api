@@ -1,10 +1,10 @@
 package com.example.bookstoreapp.controller;
 
-import static com.example.bookstoreapp.CategoryUtil.createBooksList;
-import static com.example.bookstoreapp.CategoryUtil.createCategoryRequestDto;
-import static com.example.bookstoreapp.CategoryUtil.expectedCategoryResponseDto;
-import static com.example.bookstoreapp.CategoryUtil.expectedNewCategory;
-import static com.example.bookstoreapp.CategoryUtil.updateCategory;
+import static com.example.bookstoreapp.testutil.CategoryUtil.createBooksList;
+import static com.example.bookstoreapp.testutil.CategoryUtil.createCategoryRequestDto;
+import static com.example.bookstoreapp.testutil.CategoryUtil.expectedCategoryResponseDto;
+import static com.example.bookstoreapp.testutil.CategoryUtil.expectedNewCategory;
+import static com.example.bookstoreapp.testutil.CategoryUtil.updateCategory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -98,6 +99,21 @@ class CategoryControllerIntegrationTest {
         assertNotNull(resultDto);
         assertEquals(expectedDto.getName(), resultDto.getName());
         assertEquals(expectedDto.getDescription(), resultDto.getDescription());
+    }
+
+    @Test
+    @DisplayName("Retrieve existing categories")
+    @WithMockUser(username = "user", authorities = "USER")
+    void getAll_ExistingData_ShouldReturnPageCategoryResponseDto() throws Exception {
+        Pageable pageable = Pageable.ofSize(4);
+
+        String jsonRequest = objectMapper.writeValueAsString(pageable);
+
+        mockMvc.perform(get("/categories")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andReturn();
     }
 
     @Test
@@ -194,7 +210,7 @@ class CategoryControllerIntegrationTest {
 
         List<BookDtoWithoutCategoryIds> resultBooks = objectMapper
                 .readValue(result.getResponse()
-                                .getContentAsString(), objectMapper.getTypeFactory()
+                        .getContentAsString(), objectMapper.getTypeFactory()
                         .constructCollectionType(List.class, BookDtoWithoutCategoryIds.class));
 
         assertNotNull(resultBooks);

@@ -9,7 +9,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.example.bookstoreapp.CategoryUtil;
 import com.example.bookstoreapp.dto.categorydto.CategoryRequestDto;
 import com.example.bookstoreapp.dto.categorydto.CategoryResponseDto;
 import com.example.bookstoreapp.entity.Category;
@@ -17,6 +16,7 @@ import com.example.bookstoreapp.exception.EntityNotFoundException;
 import com.example.bookstoreapp.mapper.CategoryMapper;
 import com.example.bookstoreapp.repository.category.CategoryRepository;
 import com.example.bookstoreapp.service.impl.CategoryServiceImpl;
+import com.example.bookstoreapp.testutil.CategoryUtil;
 import jakarta.validation.ValidationException;
 import java.util.List;
 import java.util.Optional;

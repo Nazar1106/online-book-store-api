@@ -1,6 +1,6 @@
-package com.example.bookstoreapp;
+package com.example.bookstoreapp.testutil;
 
-import static com.example.bookstoreapp.ShoppingCartUtil.getShoppingCartWithItems;
+import static com.example.bookstoreapp.testutil.ShoppingCartUtil.getShoppingCartWithItems;
 
 import com.example.bookstoreapp.dto.cartitemdto.CartItemRequestDto;
 import com.example.bookstoreapp.entity.CartItem;

@@ -1,4 +1,4 @@
-package com.example.bookstoreapp;
+package com.example.bookstoreapp.testutil;
 
 import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartDto;
 import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartItemDto;
@@ -20,6 +20,19 @@ public class ShoppingCartUtil {
         shoppingCart.setDeleted(false);
         cartItem.setShoppingCart(shoppingCart);
 
+        return shoppingCart;
+    }
+
+    public static ShoppingCart getShoppingCart() {
+        final ShoppingCart shoppingCart = new ShoppingCart();
+        CartItem cartItem = new CartItem();
+        cartItem.setId(1L);
+        cartItem.setBook(BookUtil.getBook());
+        cartItem.setQuantity(15);
+        shoppingCart.setId(1L);
+        shoppingCart.setUser(UserUtil.getUserAfterSaveIntoDb());
+        shoppingCart.setCartItems(Set.of(cartItem));
+        shoppingCart.setDeleted(false);
         return shoppingCart;
     }
 

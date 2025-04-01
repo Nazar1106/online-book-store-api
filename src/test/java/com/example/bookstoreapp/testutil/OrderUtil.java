@@ -1,4 +1,4 @@
-package com.example.bookstoreapp;
+package com.example.bookstoreapp.testutil;
 
 import com.example.bookstoreapp.dto.orderdto.OrderRequestDto;
 import com.example.bookstoreapp.dto.orderdto.OrderResponseDto;
@@ -37,7 +37,7 @@ public class OrderUtil {
 
     public static OrderRequestDto getOrderRequestDto() {
         OrderRequestDto orderRequestDto = new OrderRequestDto();
-        orderRequestDto.setShippingAddress("Test shipping address");
+        orderRequestDto.setShippingAddress("123 Main St, Springfield, IL");
 
         return orderRequestDto;
     }

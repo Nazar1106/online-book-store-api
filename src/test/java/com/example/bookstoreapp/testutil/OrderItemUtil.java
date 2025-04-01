@@ -1,4 +1,4 @@
-package com.example.bookstoreapp;
+package com.example.bookstoreapp.testutil;
 
 import com.example.bookstoreapp.dto.orderitemdto.OrderItemResponseDto;
 import com.example.bookstoreapp.entity.OrderItem;

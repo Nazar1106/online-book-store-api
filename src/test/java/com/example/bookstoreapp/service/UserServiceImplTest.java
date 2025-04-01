@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.example.bookstoreapp.UserUtil;
 import com.example.bookstoreapp.dto.userdto.UserRegistrationRequestDto;
 import com.example.bookstoreapp.dto.userdto.UserResponseDto;
 import com.example.bookstoreapp.entity.Role;
@@ -16,6 +15,7 @@ import com.example.bookstoreapp.mapper.UserMapper;
 import com.example.bookstoreapp.repository.role.RoleRepository;
 import com.example.bookstoreapp.repository.user.UserRepository;
 import com.example.bookstoreapp.service.impl.UserServiceImpl;
+import com.example.bookstoreapp.testutil.UserUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,7 @@ public class UserServiceImplTest {
     void setUp() {
         userBeforeSaveIntoBd = UserUtil.getUserBeforeSaveIntoDb();
         userAfterSaveIntoBd = UserUtil.getUserAfterSaveIntoDb();
-        role = UserUtil.getRole();
+        role = UserUtil.getRoleUser();
         requestDto = UserUtil.getUserRequestDto();
         userResponseDto = UserUtil.getUserResponseDto();
     }

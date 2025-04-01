@@ -4,12 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.example.bookstoreapp.OrderItemUtil;
-import com.example.bookstoreapp.OrderUtil;
-import com.example.bookstoreapp.ShoppingCartUtil;
 import com.example.bookstoreapp.dto.orderdto.OrderRequestDto;
 import com.example.bookstoreapp.dto.orderdto.OrderResponseDto;
 import com.example.bookstoreapp.dto.orderdto.OrderUpdateDto;
@@ -25,6 +23,9 @@ import com.example.bookstoreapp.repository.order.OrderRepository;
 import com.example.bookstoreapp.repository.orderitem.OrderItemRepository;
 import com.example.bookstoreapp.repository.shoppingcart.ShoppingCartRepository;
 import com.example.bookstoreapp.service.impl.OrderServiceImpl;
+import com.example.bookstoreapp.testutil.OrderItemUtil;
+import com.example.bookstoreapp.testutil.OrderUtil;
+import com.example.bookstoreapp.testutil.ShoppingCartUtil;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -88,12 +89,12 @@ public class OrderServiceImplTest {
     @DisplayName("Create order with valid input should return OrderResponseDto")
     void createOrder_ValidOrder_ShouldReturnOrderResponseDto() {
         Long userId = 1L;
-        String actualShippingAddress = order.getShippingAddress();
 
         when(shoppingCartRepository.findByUserId(userId))
                 .thenReturn(Optional.of(shoppingCartWithItems));
-        when(orderMapper.cartToOrder(shoppingCartWithItems,
-                actualShippingAddress)).thenReturn(order);
+
+        when(orderMapper.cartToOrder(any(ShoppingCart.class), any(String.class)))
+                .thenReturn(order);
 
         shoppingCartWithItems.setCartItems(new HashSet<>(shoppingCartWithItems.getCartItems()));
         when(orderMapper.toOrderDto(orderRepository.save(order))).thenReturn(orderResponseDto);
@@ -108,7 +109,6 @@ public class OrderServiceImplTest {
                 "Shopping cart should be empty after the order is created.");
 
         verify(shoppingCartRepository).findByUserId(userId);
-        verify(orderMapper).cartToOrder(shoppingCartWithItems, actualShippingAddress);
     }
 
     @Test

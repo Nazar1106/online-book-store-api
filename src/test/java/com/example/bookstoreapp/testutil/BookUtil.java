@@ -1,10 +1,11 @@
-package com.example.bookstoreapp;
+package com.example.bookstoreapp.testutil;
 
 import com.example.bookstoreapp.dto.bookdto.BookDto;
 import com.example.bookstoreapp.dto.bookdto.CreateBookRequestDto;
 import com.example.bookstoreapp.entity.Book;
 import com.example.bookstoreapp.entity.Category;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 public class BookUtil {
+
+    public static List<BookDto> searchBooksByParams() {
+        BookDto book1 = new BookDto();
+        book1.setId(1L);
+        book1.setTitle("NewBookTitle1");
+        book1.setAuthor("NewBookAuthor1");
+        book1.setIsbn("NewBookIsbn1");
+        book1.setPrice(BigDecimal.valueOf(150));
+        book1.setDescription("NewBookDescription1");
+        book1.setCoverImage("NewCoverImage1");
+        book1.setCategoryIds(List.of(1L));
+
+        List<BookDto> books = new ArrayList<>();
+        books.add(book1);
+
+        return books;
+    }
 
     public static Book getBook(CreateBookRequestDto requestDto) {
         Book book = new Book();

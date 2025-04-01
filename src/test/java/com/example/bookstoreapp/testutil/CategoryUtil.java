@@ -1,4 +1,4 @@
-package com.example.bookstoreapp;
+package com.example.bookstoreapp.testutil;
 
 import com.example.bookstoreapp.dto.categorydto.BookDtoWithoutCategoryIds;
 import com.example.bookstoreapp.dto.categorydto.CategoryRequestDto;
