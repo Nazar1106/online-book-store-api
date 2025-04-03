@@ -90,9 +90,11 @@ public class CategoryUtil {
     }
 
     public static CategoryResponseDto expectedNewCategory() {
+        Long id = 5L;
         String name = "createName";
         String description = "createDescription";
         CategoryResponseDto responseDto = new CategoryResponseDto();
+        responseDto.setId(id);
         responseDto.setName(name);
         responseDto.setDescription(description);
         return responseDto;

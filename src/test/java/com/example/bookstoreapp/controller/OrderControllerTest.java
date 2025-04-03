@@ -1,5 +1,7 @@
 package com.example.bookstoreapp.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,13 +11,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.bookstoreapp.dto.orderdto.OrderRequestDto;
+import com.example.bookstoreapp.dto.orderdto.OrderResponseDto;
 import com.example.bookstoreapp.dto.orderdto.OrderUpdateDto;
+import com.example.bookstoreapp.dto.orderitemdto.OrderItemResponseDto;
 import com.example.bookstoreapp.entity.User;
 import com.example.bookstoreapp.testutil.OrderUtil;
 import com.example.bookstoreapp.testutil.UserUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
@@ -39,18 +45,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class OrderControllerIntegrationTest {
+public class OrderControllerTest {
 
-    public static final String INSERT_ORDER_TO_TEST_DB_SQL =
+    private static final String INSERT_ORDER_TO_TEST_DB_SQL =
             "database/order/insert-order-to-test-db.sql";
-    public static final String INSERT_ORDER_ITEM_TO_TEST_DB_SQL =
+    private static final String INSERT_ORDER_ITEM_TO_TEST_DB_SQL =
             "database/orderitem/insert-order-item-to-test-db.sql";
-    public static final String DELETE_ALL_DATA_SQL = "database/delete-all-data.sql";
-    public static final String INSERT_BOOKS_WITH_CATEGORIES_TO_DB_SQL =
+    private static final String DELETE_ALL_DATA_SQL = "database/delete-all-data.sql";
+    private static final String INSERT_BOOKS_WITH_CATEGORIES_TO_DB_SQL =
             "database/books/insert-books-with-categories-to-db.sql";
-    public static final String CATEGORIES_TO_TEST_DB_SQL =
+    private static final String CATEGORIES_TO_TEST_DB_SQL =
             "database/categories/insert-categories-to-test-db.sql";
-    public static final String INSERT_SHOPPING_CART_FOR_USER_INTO_DB_SQL =
+    private static final String INSERT_SHOPPING_CART_FOR_USER_INTO_DB_SQL =
             "database/cartitems/insert-shopping-cart-for-user-into-db.sql";
 
     private static MockMvc mockMvc;
@@ -92,6 +98,8 @@ public class OrderControllerIntegrationTest {
         OrderRequestDto orderRequestDto = OrderUtil.getOrderRequestDto();
         String jsonRequest = objectMapper.writeValueAsString(orderRequestDto);
 
+        OrderResponseDto expected = OrderUtil.getNewOrderResponseDto();
+
         UsernamePasswordAuthenticationToken auth = new
                 UsernamePasswordAuthenticationToken(UserUtil.getUser(), null,
                 UserUtil.getUser().getAuthorities());
@@ -101,20 +109,44 @@ public class OrderControllerIntegrationTest {
         MvcResult result = mockMvc.perform(post("/orders")
                         .with(authentication(auth)).contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.status").isString())
                 .andReturn();
 
-        Assertions.assertNotNull(result);
-        String jsonResponse = result.getResponse().getContentAsString();
-        Assertions.assertFalse(jsonResponse.isEmpty(), "Response body should not be empty");
+        OrderResponseDto actual = objectMapper
+                .readValue(result.getResponse().getContentAsString(), OrderResponseDto.class);
+        expected.setOrderDate(actual.getOrderDate());
+
+        assertNotNull(result);
+        assertThat(expected).usingRecursiveComparison().isEqualTo(actual);
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"USER"})
+    @DisplayName("Throw exception with not valid permission")
+    void createOrder_NotValidData_ShouldReturnException() throws Exception {
+        OrderRequestDto orderRequestDto = OrderUtil.getOrderRequestDto();
+        String jsonRequest = objectMapper.writeValueAsString(orderRequestDto);
+
+        UsernamePasswordAuthenticationToken auth = new
+                UsernamePasswordAuthenticationToken(UserUtil.getUser(), null,
+                UserUtil.getAdmin().getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        mockMvc.perform(post("/orders")
+                        .with(authentication(auth)).contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isForbidden())
+                .andReturn();
     }
 
     @Test
     @WithMockUser(username = "user", authorities = {"USER"})
     @DisplayName("Retrieve order history")
     void getUserOrderHistory_ExistData_ShouldReturnOrderResponseDto() throws Exception {
+        List<OrderResponseDto> expected = OrderUtil.getListResponseDto();
 
         UsernamePasswordAuthenticationToken auth = new
                 UsernamePasswordAuthenticationToken(UserUtil.getUser(), null,
@@ -130,18 +162,22 @@ public class OrderControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Assertions.assertNotNull(result);
-        String jsonResponse = result.getResponse().getContentAsString();
-        Assertions.assertFalse(jsonResponse.isEmpty(), "Response body should not be empty");
+        List<OrderResponseDto> actual = objectMapper
+                .readValue(result.getResponse().getContentAsString(),
+                        new TypeReference<>() {
+                        });
+        expected.getFirst().setOrderDate(actual.getFirst().getOrderDate());
+
+        assertNotNull(actual);
+        assertThat(expected).usingRecursiveComparison().isEqualTo(actual);
     }
 
     @Test
     @DisplayName("Update order status - should return updated OrderUpdateDto")
     void updateOrderStatus_ValidData_ShouldReturnUpdatedOrderDto() throws Exception {
-
         Long orderId = 1L;
-        OrderUpdateDto updateDto = OrderUtil.getOrderUpdateDto();
-        String jsonRequest = objectMapper.writeValueAsString(updateDto);
+        OrderUpdateDto expected = OrderUtil.getOrderUpdateDto();
+        String jsonRequest = objectMapper.writeValueAsString(expected);
 
         User adminUser = UserUtil.getAdmin();
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
@@ -158,9 +194,11 @@ public class OrderControllerIntegrationTest {
                 .andExpect(jsonPath("$.status").isString())
                 .andReturn();
 
-        Assertions.assertNotNull(result);
-        String jsonResponse = result.getResponse().getContentAsString();
-        Assertions.assertFalse(jsonResponse.isEmpty(), "Response body should not be empty");
+        OrderUpdateDto actual = objectMapper
+                .readValue(result.getResponse().getContentAsString(), OrderUpdateDto.class);
+
+        assertNotNull(actual);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -184,7 +222,8 @@ public class OrderControllerIntegrationTest {
                 .andExpect(jsonPath("$.totalElements").value(1))
                 .andReturn();
 
-        Assertions.assertNotNull(result);
+        assertNotNull(result);
+
         String jsonResponse = result.getResponse().getContentAsString();
         Assertions.assertFalse(jsonResponse.isEmpty(), "Response body should not be empty");
     }
@@ -195,6 +234,7 @@ public class OrderControllerIntegrationTest {
     void getOrderItem_ValidData_ShouldReturnOrderItemResponseDto() throws Exception {
         Long orderId = 1L;
         Long itemId = 1L;
+        OrderItemResponseDto expected = OrderUtil.getOrderItemResponseDto();
         User user = UserUtil.getUser();
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 user, null, user.getAuthorities()
@@ -209,7 +249,11 @@ public class OrderControllerIntegrationTest {
                 .andExpect(jsonPath("$.id").value(itemId))
                 .andReturn();
 
-        Assertions.assertNotNull(result);
+        OrderItemResponseDto actual = objectMapper
+                .readValue(result.getResponse().getContentAsString(), OrderItemResponseDto.class);
+
+        assertNotNull(actual);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @AfterEach

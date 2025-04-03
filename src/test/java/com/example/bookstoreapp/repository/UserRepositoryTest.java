@@ -23,7 +23,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
 
-    public static final String DELETE_ALL_DATA_SQL = "database/delete-all-data.sql";
+    private static final String DELETE_ALL_DATA_SQL = "database/delete-all-data.sql";
 
     @Autowired
     private UserRepository userRepository;

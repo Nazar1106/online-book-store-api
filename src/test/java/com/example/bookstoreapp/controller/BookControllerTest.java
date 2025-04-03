@@ -4,6 +4,7 @@ import static com.example.bookstoreapp.testutil.BookUtil.creatBookRequestDto;
 import static com.example.bookstoreapp.testutil.BookUtil.createExpectedBookDto;
 import static com.example.bookstoreapp.testutil.BookUtil.getBookDto;
 import static com.example.bookstoreapp.testutil.BookUtil.getInvalidCreateBookRequestDto;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,7 +45,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class BookControllerIntegrationTest {
+class BookControllerTest {
     private static final String INSERT_BOOKS_SCRIPT_PATH =
             "database/books/insert-books-with-categories-to-db.sql";
     private static final String INSERT_CATEGORIES_SCRIPT_PATH =
@@ -119,7 +120,7 @@ class BookControllerIntegrationTest {
                 });
 
         assertNotNull(actual);
-        assertEquals(expected.size(), actual.size());
+        assertThat(expected).usingRecursiveComparison().isEqualTo(actual);
     }
 
     @Test

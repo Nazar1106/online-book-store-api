@@ -26,10 +26,10 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class OrderRepositoryTest {
 
-    public static final String ORDER_INSERT_ORDER_TO_TEST_DB_SQL =
+    private static final String ORDER_INSERT_ORDER_TO_TEST_DB_SQL =
             "database/order/insert-order-to-test-db.sql";
 
-    public static final String DELETE_ALL_DATA_SQL =
+    private static final String DELETE_ALL_DATA_SQL =
             "database/delete-all-data.sql";
 
     @Autowired

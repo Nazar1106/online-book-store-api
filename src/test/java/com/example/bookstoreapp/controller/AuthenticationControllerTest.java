@@ -1,6 +1,6 @@
 package com.example.bookstoreapp.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AuthenticationControllerIntegrationTest {
+public class AuthenticationControllerTest {
 
     protected static MockMvc mockMvc;
 
@@ -66,11 +66,7 @@ public class AuthenticationControllerIntegrationTest {
                         .getContentAsString(), UserResponseDto.class);
 
         assertNotNull(actual);
-        assertNotNull(actual.getId());
-        assertEquals(expectedDto.getEmail(), actual.getEmail());
-        assertEquals(expectedDto.getShippingAddress(), actual.getShippingAddress());
-        assertEquals(expectedDto.getFirstName(), actual.getFirstName());
-        assertEquals(expectedDto.getLastName(), actual.getLastName());
+        assertThat(expectedDto).usingRecursiveComparison().isEqualTo(actual);
     }
 
     @Test

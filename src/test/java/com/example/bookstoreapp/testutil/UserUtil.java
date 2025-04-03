@@ -106,7 +106,7 @@ public class UserUtil {
 
     public static UserResponseDto getUserResponseDto() {
         UserResponseDto user = new UserResponseDto();
-        user.setId(1L);
+        user.setId(4L);
         user.setEmail("testUser@Gmail.com");
         user.setFirstName("TestUserName1");
         user.setLastName("TestLastName1");

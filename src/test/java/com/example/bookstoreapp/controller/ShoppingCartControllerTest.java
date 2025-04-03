@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ShoppingCartControllerIntegrationTest {
+public class ShoppingCartControllerTest {
 
     public static final String INSERT_SHOPPING_CART_FOR_USER_INTO_DB_SQL =
             "database/cartitems/insert-shopping-cart-for-user-into-db.sql";

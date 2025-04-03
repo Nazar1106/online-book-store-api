@@ -1,7 +1,6 @@
 package com.example.bookstoreapp.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.bookstoreapp.entity.OrderItem;
@@ -29,15 +28,15 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class OrderItemRepositoryTest {
 
-    public static final String INSERT_CATEGORIES_TO_TEST_DB_SQL =
+    private static final String INSERT_CATEGORIES_TO_TEST_DB_SQL =
             "database/categories/insert-categories-to-test-db.sql";
-    public static final String INSERT_BOOKS_WITH_CATEGORIES_TO_DB_SQL =
+    private static final String INSERT_BOOKS_WITH_CATEGORIES_TO_DB_SQL =
             "database/books/insert-books-with-categories-to-db.sql";
-    public static final String INSERT_ORDER_TO_TEST_DB_SQL =
+    private static final String INSERT_ORDER_TO_TEST_DB_SQL =
             "database/order/insert-order-to-test-db.sql";
-    public static final String INSERT_ORDER_ITEM_TO_TEST_DB_SQL =
+    private static final String INSERT_ORDER_ITEM_TO_TEST_DB_SQL =
             "database/orderitem/insert-order-item-to-test-db.sql";
-    public static final String DELETE_ALL_DATA_SQL =
+    private static final String DELETE_ALL_DATA_SQL =
             "database/delete-all-data.sql";
 
     @Autowired
@@ -153,6 +152,7 @@ public class OrderItemRepositoryTest {
     @Test
     @DisplayName(value = "Should return an empty page for a non-existing order and user")
     void findByOrderIdAndUserId_NonExistingOrderItems_ShouldReturnEmptyPage() {
+        int expectedElements = 0;
         Long orderId = 4L;
         Long userId = 4L;
         Pageable pageable = Pageable.ofSize(1);
@@ -160,7 +160,7 @@ public class OrderItemRepositoryTest {
         Page<OrderItem> pageOrderItem =
                 orderItemRepository.findByOrderIdAndUserId(orderId, userId, pageable);
 
-        assertNotNull(pageOrderItem);
+        assertEquals(expectedElements, pageOrderItem.getTotalElements());
     }
 
     @AfterAll
