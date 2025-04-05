@@ -1,10 +1,11 @@
 package com.example.bookstoreapp.controller;
 
-import static com.example.bookstoreapp.CategoryUtil.createBooksList;
-import static com.example.bookstoreapp.CategoryUtil.createCategoryRequestDto;
-import static com.example.bookstoreapp.CategoryUtil.expectedCategoryResponseDto;
-import static com.example.bookstoreapp.CategoryUtil.expectedNewCategory;
-import static com.example.bookstoreapp.CategoryUtil.updateCategory;
+import static com.example.bookstoreapp.testutil.CategoryUtil.createBooksList;
+import static com.example.bookstoreapp.testutil.CategoryUtil.createCategoryRequestDto;
+import static com.example.bookstoreapp.testutil.CategoryUtil.expectedCategoryResponseDto;
+import static com.example.bookstoreapp.testutil.CategoryUtil.expectedNewCategory;
+import static com.example.bookstoreapp.testutil.CategoryUtil.updateCategory;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -41,7 +43,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CategoryControllerIntegrationTest {
+class CategoryControllerTest {
 
     private static final String INSERT_BOOKS_SCRIPT_PATH =
             "database/books/insert-books-with-categories-to-db.sql";
@@ -92,12 +94,26 @@ class CategoryControllerIntegrationTest {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        CategoryRequestDto resultDto = objectMapper.readValue(
-                result.getResponse().getContentAsString(), CategoryRequestDto.class);
+        CategoryResponseDto responseDto = objectMapper.readValue(
+                result.getResponse().getContentAsString(), CategoryResponseDto.class);
 
-        assertNotNull(resultDto);
-        assertEquals(expectedDto.getName(), resultDto.getName());
-        assertEquals(expectedDto.getDescription(), resultDto.getDescription());
+        assertNotNull(responseDto);
+        assertThat(expectedDto).usingRecursiveComparison().isEqualTo(responseDto);
+    }
+
+    @Test
+    @DisplayName("Retrieve existing categories")
+    @WithMockUser(username = "user", authorities = "USER")
+    void getAll_ExistingData_ShouldReturnPageCategoryResponseDto() throws Exception {
+        Pageable pageable = Pageable.ofSize(4);
+
+        String jsonRequest = objectMapper.writeValueAsString(pageable);
+
+        mockMvc.perform(get("/categories")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andReturn();
     }
 
     @Test
@@ -123,9 +139,7 @@ class CategoryControllerIntegrationTest {
                 result.getResponse().getContentAsString(), CategoryResponseDto.class);
 
         assertNotNull(resultDto);
-        assertEquals(categoryId, resultDto.getId());
-        assertEquals(updatedName, resultDto.getName());
-        assertEquals(updatedDescription, resultDto.getDescription());
+        assertThat(updateRequestDto).usingRecursiveComparison().isEqualTo(resultDto);
     }
 
     @Test
@@ -134,16 +148,13 @@ class CategoryControllerIntegrationTest {
     void updateCategory_WithoutPermission_ShouldReturnForbidden() throws Exception {
         Long categoryId = 1L;
 
-        CategoryRequestDto updateRequestDto =
-                createCategoryRequestDto();
+        CategoryRequestDto requestDto = createCategoryRequestDto();
 
-        String jsonRequest = objectMapper.writeValueAsString(updateRequestDto);
+        String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         mockMvc.perform(put("/categories/{id}", categoryId)
-                        .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden())
-                .andReturn();
+                .content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden()).andReturn();
     }
 
     @Test
@@ -194,7 +205,7 @@ class CategoryControllerIntegrationTest {
 
         List<BookDtoWithoutCategoryIds> resultBooks = objectMapper
                 .readValue(result.getResponse()
-                                .getContentAsString(), objectMapper.getTypeFactory()
+                        .getContentAsString(), objectMapper.getTypeFactory()
                         .constructCollectionType(List.class, BookDtoWithoutCategoryIds.class));
 
         assertNotNull(resultBooks);

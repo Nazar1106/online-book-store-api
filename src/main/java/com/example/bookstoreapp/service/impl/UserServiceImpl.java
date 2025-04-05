@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-    public static final String CAN_T_REGISTER_USER_MSG = "Can't register user ";
+    public static final String CAN_T_REGISTER_USER_MSG = "User email already exist";
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

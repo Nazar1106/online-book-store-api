@@ -29,7 +29,7 @@ public class OrderServiceImpl implements OrderService {
     public static final String CAN_T_FIND_ORDER_BYD_ID = "Can't find order byd id ";
     public static final String ORDER_ITEM_NOT_FOUND_ = "Order item not found ";
     public static final String CAN_T_PLACE_AN_ORDER = "The cart is empty, "
-            + "so you can't place an order";
+            + "so you can't place an order ";
 
     private final ShoppingCartRepository shoppingCartRepository;
 

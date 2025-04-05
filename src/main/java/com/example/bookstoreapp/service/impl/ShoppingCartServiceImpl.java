@@ -105,5 +105,4 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCart.setUser(user);
         shoppingCartRepository.save(shoppingCart);
     }
-
 }

@@ -1,4 +1,4 @@
-package com.example.bookstoreapp;
+package com.example.bookstoreapp.testutil;
 
 import com.example.bookstoreapp.dto.categorydto.BookDtoWithoutCategoryIds;
 import com.example.bookstoreapp.dto.categorydto.CategoryRequestDto;
@@ -19,6 +19,16 @@ public class CategoryUtil {
         category.setName(name);
         category.setDescription(description);
         category.setDeleted(false);
+        return category;
+    }
+
+    public static Category getCategory() {
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Fiction");
+        category.setDescription("Books that contain fictional stories");
+        category.setDeleted(false);
+
         return category;
     }
 
@@ -90,9 +100,11 @@ public class CategoryUtil {
     }
 
     public static CategoryResponseDto expectedNewCategory() {
+        Long id = 5L;
         String name = "createName";
         String description = "createDescription";
         CategoryResponseDto responseDto = new CategoryResponseDto();
+        responseDto.setId(id);
         responseDto.setName(name);
         responseDto.setDescription(description);
         return responseDto;

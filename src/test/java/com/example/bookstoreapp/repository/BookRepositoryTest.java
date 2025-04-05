@@ -1,11 +1,13 @@
 package com.example.bookstoreapp.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.bookstoreapp.entity.Book;
 import com.example.bookstoreapp.repository.book.BookRepository;
+import com.example.bookstoreapp.testutil.BookUtil;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -71,11 +73,12 @@ class BookRepositoryTest {
     @DisplayName("Should return books when categoryId exists")
     void findByCategoriesId_CategoryExists_ShouldReturnBooks() {
         Long existingCategoryId = 1L;
+        List<Book> expectedBooks = BookUtil.getExpectedBooks();
 
-        List<Book> books = bookRepository.findByCategoriesId(existingCategoryId);
+        List<Book> actual = bookRepository.findByCategoriesId(existingCategoryId);
 
-        assertNotNull(books, "Result list should not be null.");
-        assertFalse(books.isEmpty(), "Books list should not be empty for existing category.");
+        assertNotNull(actual, "Result list should not be null.");
+        assertThat(expectedBooks).usingRecursiveComparison().isEqualTo(actual);
     }
 
     @Test
