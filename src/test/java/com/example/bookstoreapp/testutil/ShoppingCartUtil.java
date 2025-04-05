@@ -4,6 +4,7 @@ import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartDto;
 import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartItemDto;
 import com.example.bookstoreapp.entity.CartItem;
 import com.example.bookstoreapp.entity.ShoppingCart;
+import com.example.bookstoreapp.entity.User;
 import java.util.Set;
 
 public class ShoppingCartUtil {
@@ -36,9 +37,19 @@ public class ShoppingCartUtil {
         return shoppingCart;
     }
 
+    public static ShoppingCart getExpectedShoppingCart() {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        User user = new User();
+        user.setId(1L);
+        shoppingCart.setId(1L);
+        shoppingCart.setUser(user);
+        shoppingCart.setDeleted(false);
+
+        return shoppingCart;
+    }
+
     public static ShoppingCart getShoppingCartWithoutItems() {
         final ShoppingCart shoppingCart = new ShoppingCart();
-
         shoppingCart.setId(1L);
         shoppingCart.setUser(UserUtil.getUserAfterSaveIntoDb());
         shoppingCart.setCartItems(Set.of());

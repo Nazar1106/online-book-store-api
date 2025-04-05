@@ -1,6 +1,7 @@
 package com.example.bookstoreapp.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -26,7 +27,6 @@ import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -225,7 +225,7 @@ public class OrderControllerTest {
         assertNotNull(result);
 
         String jsonResponse = result.getResponse().getContentAsString();
-        Assertions.assertFalse(jsonResponse.isEmpty(), "Response body should not be empty");
+        assertFalse(jsonResponse.isEmpty(), "Response body should not be empty");
     }
 
     @Test

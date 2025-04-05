@@ -5,8 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.bookstoreapp.entity.OrderItem;
 import com.example.bookstoreapp.repository.orderitem.OrderItemRepository;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import com.example.bookstoreapp.testutil.OrderItemUtil;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -64,17 +63,17 @@ public class OrderItemRepositoryTest {
         Long orderItemId = 1L;
         Long orderId = 1L;
         Long userId = 1L;
+        Optional<OrderItem> expectedOrderItem = OrderItemUtil.getOptionalOrderItem();
 
-        Optional<OrderItem> optionalOrderItem = orderItemRepository
+        Optional<OrderItem> actualOrderItem = orderItemRepository
                 .findByIdAndOrderIdAndUserId(orderItemId, orderId, userId);
-        assertTrue(optionalOrderItem.isPresent());
+        assertTrue(actualOrderItem.isPresent());
+        assertTrue(expectedOrderItem.isPresent());
 
-        BigDecimal expectedPrice = BigDecimal.valueOf(150).setScale(2, RoundingMode.UNNECESSARY);
-        int expectedQuantity = 20;
+        OrderItem actual = actualOrderItem.get();
+        OrderItem expected = expectedOrderItem.get();
 
-        OrderItem orderItem = optionalOrderItem.get();
-        assertEquals(expectedPrice, orderItem.getPrice());
-        assertEquals(expectedQuantity, orderItem.getQuantity());
+        verifyOrderItemEquality(expected, actual);
     }
 
     @Test
@@ -121,15 +120,19 @@ public class OrderItemRepositoryTest {
     void findByOrderIdAndUserId_ExistSingleOrderItem_ShouldReturnPageItem() {
         Long orderId = 1L;
         Long userId = 1L;
+        Page<OrderItem> expected = OrderItemUtil.getPageOrderItem();
+
         Pageable pageable = Pageable.ofSize(1);
 
-        Page<OrderItem> pageOrderItem =
+        Page<OrderItem> actual =
                 orderItemRepository.findByOrderIdAndUserId(orderId, userId, pageable);
 
-        int expectedSize = 1;
+        OrderItem getExpectedContent = expected.getContent().getFirst();
+        OrderItem getActualContent = actual.getContent().getFirst();
 
-        assertEquals(expectedSize, pageOrderItem.getNumberOfElements());
-        assertEquals(expectedSize, pageOrderItem.getTotalPages());
+        assertEquals(expected.getTotalElements(), actual.getTotalElements());
+        assertEquals(expected.getTotalPages(), actual.getTotalPages());
+        verifyOrderItemEquality(getExpectedContent, getActualContent);
     }
 
     @Test
@@ -139,14 +142,21 @@ public class OrderItemRepositoryTest {
         Long userId = 1L;
         Pageable pageable = Pageable.ofSize(2);
 
-        Page<OrderItem> pageOrderItem =
+        Page<OrderItem> expected = OrderItemUtil.getPageOrderItems();
+
+        Page<OrderItem> actual =
                 orderItemRepository.findByOrderIdAndUserId(orderId, userId, pageable);
 
-        int expectedElementSize = 2;
-        int expectedPageSize = 1;
+        assertEquals(expected.getTotalElements(), actual.getNumberOfElements());
+        assertEquals(expected.getTotalPages(), actual.getTotalPages());
 
-        assertEquals(expectedElementSize, pageOrderItem.getNumberOfElements());
-        assertEquals(expectedPageSize, pageOrderItem.getTotalPages());
+        OrderItem getFirstExpectedContent = expected.getContent().getFirst();
+        OrderItem getFirstActualContent = actual.getContent().getFirst();
+        OrderItem getSecondExpectedContent = expected.getContent().getLast();
+        OrderItem getSecondActualContent = actual.getContent().getLast();
+
+        verifyOrderItemEquality(getFirstExpectedContent, getFirstActualContent);
+        verifyOrderItemEquality(getSecondExpectedContent, getSecondActualContent);
     }
 
     @Test
@@ -161,6 +171,13 @@ public class OrderItemRepositoryTest {
                 orderItemRepository.findByOrderIdAndUserId(orderId, userId, pageable);
 
         assertEquals(expectedElements, pageOrderItem.getTotalElements());
+    }
+
+    private static void verifyOrderItemEquality(OrderItem expected, OrderItem actual) {
+        assertEquals(expected.getOrder().getId(), actual.getOrder().getId());
+        assertEquals(expected.getOrder().getId(), actual.getOrder().getId());
+        assertEquals(expected.getQuantity(), actual.getQuantity());
+        assertEquals(expected.getPrice(), actual.getPrice());
     }
 
     @AfterAll

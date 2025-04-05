@@ -38,15 +38,14 @@ public class UserUtil {
         return user;
     }
 
-    public static User getSecondUser() {
+    public static User getUserWithHashedPassword() {
         User user = new User();
-        user.setId(2L);
-        user.setEmail("jane.smith@example.com");
-        user.setPassword("12345678");
-        user.setPassword("12345678");
-        user.setFirstName("Jane");
-        user.setLastName("Smith");
-        user.setShippingAddress("456 Oak St, Lincoln, NE");
+        user.setId(1L);
+        user.setEmail("john.doe@example.com");
+        user.setPassword("$2a$10$MciJPpHrd8psQfrFmYyBc.j2PGf5k9xP/sOrNuT9pUwac6ah9vzw6");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setShippingAddress("123 Main St, Springfield, IL");
         user.setRoles(Set.of(getRoleUser()));
 
         return user;

@@ -242,4 +242,5 @@ public class BookServiceImplTest {
 
         assertThat(exception.getMessage()).isEqualTo(expectedMessage);
     }
+
 }

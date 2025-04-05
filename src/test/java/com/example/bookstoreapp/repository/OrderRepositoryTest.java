@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.bookstoreapp.entity.Order;
 import com.example.bookstoreapp.repository.order.OrderRepository;
+import com.example.bookstoreapp.testutil.OrderUtil;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -50,14 +51,26 @@ public class OrderRepositoryTest {
     void getAllByUserId_ExistOrders_ShouldReturnListOrders() {
         Long userId = 1L;
         Pageable pageable = Pageable.ofSize(2);
+        List<Order> expectedListOrders = OrderUtil.getListOrders();
 
-        List<Order> allOrdersByUserId = orderRepository
+        List<Order> actualListOrders = orderRepository
                 .getAllByUserId(userId, pageable);
 
-        int expectedOrders = 2;
+        Order expectedGetFirst = expectedListOrders.getFirst();
+        Order expectedGetSecond = expectedListOrders.getLast();
 
-        assertNotNull(allOrdersByUserId);
-        assertEquals(expectedOrders, allOrdersByUserId.size());
+        Order actualGetFirst = actualListOrders.getFirst();
+        Order actualGetSecond = actualListOrders.getLast();
+
+        expectedGetFirst.setOrderDate(actualGetFirst.getOrderDate());
+        expectedGetSecond.setOrderDate(actualGetSecond.getOrderDate());
+
+        assertNotNull(actualListOrders);
+        assertEquals(expectedListOrders.size(), actualListOrders.size());
+
+        verifyOrderEquality(expectedGetFirst, actualGetFirst);
+        verifyOrderEquality(expectedGetSecond, actualGetSecond);
+
     }
 
     @Test
@@ -66,13 +79,18 @@ public class OrderRepositoryTest {
         Long userId = 2L;
         Pageable pageable = Pageable.ofSize(1);
 
-        List<Order> allOrdersByUserId = orderRepository
+        List<Order> expectedListOrder = OrderUtil.getListOrder();
+
+        List<Order> actualListOrder = orderRepository
                 .getAllByUserId(userId, pageable);
 
-        int expectedOrders = 1;
+        Order expectedOrder = expectedListOrder.getFirst();
+        Order actualOrder = actualListOrder.getFirst();
+        expectedOrder.setOrderDate(actualOrder.getOrderDate());
 
-        assertNotNull(allOrdersByUserId);
-        assertEquals(expectedOrders, allOrdersByUserId.size());
+        assertNotNull(actualListOrder);
+        assertEquals(expectedListOrder.size(), actualListOrder.size());
+        verifyOrderEquality(expectedOrder, actualOrder);
     }
 
     @Test
@@ -84,6 +102,14 @@ public class OrderRepositoryTest {
         List<Order> allByUserId = orderRepository.getAllByUserId(userId, pageable);
 
         assertTrue(allByUserId.isEmpty());
+    }
+
+    private static void verifyOrderEquality(Order expectedGetFirst, Order actualGetFirst) {
+        assertEquals(expectedGetFirst.getId(), actualGetFirst.getId());
+        assertEquals(expectedGetFirst.getOrderDate(), actualGetFirst.getOrderDate());
+        assertEquals(expectedGetFirst.getStatus(), actualGetFirst.getStatus());
+        assertEquals(expectedGetFirst.getTotal(), actualGetFirst.getTotal());
+        assertEquals(expectedGetFirst.getShippingAddress(), actualGetFirst.getShippingAddress());
     }
 
     @AfterAll

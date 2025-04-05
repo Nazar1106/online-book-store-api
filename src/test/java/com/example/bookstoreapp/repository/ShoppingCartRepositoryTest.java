@@ -1,5 +1,6 @@
 package com.example.bookstoreapp.repository;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.bookstoreapp.entity.ShoppingCart;
@@ -9,7 +10,6 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class ShoppingCartRepositoryTest {
 
         Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findByUserId(userId);
 
-        Assertions.assertNotNull(shoppingCart);
+        assertNotNull(shoppingCart);
     }
 
     @Test

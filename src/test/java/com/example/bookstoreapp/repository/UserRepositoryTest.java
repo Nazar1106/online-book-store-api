@@ -1,11 +1,12 @@
 package com.example.bookstoreapp.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.bookstoreapp.entity.User;
 import com.example.bookstoreapp.repository.user.UserRepository;
+import com.example.bookstoreapp.testutil.UserUtil;
 import java.sql.Connection;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -52,14 +53,15 @@ public class UserRepositoryTest {
     @DisplayName(value = "Return optional user when user exists")
     public void findByEmail_ExistUser_ShouldReturnOptionalUser() {
         String userEmail = "john.doe@example.com";
+        User expectedUser = UserUtil.getUserWithHashedPassword();
 
         Optional<User> optionalUser = userRepository.findByEmail(userEmail);
 
         assertTrue(optionalUser.isPresent());
 
-        User user = optionalUser.get();
-        assertEquals("John", user.getFirstName());
-        assertEquals(user.getUsername(), userEmail);
+        User actualUser = optionalUser.get();
+
+        assertThat(actualUser).usingRecursiveComparison().isEqualTo(expectedUser);
     }
 
     @Test

@@ -22,6 +22,16 @@ public class CategoryUtil {
         return category;
     }
 
+    public static Category getCategory() {
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Fiction");
+        category.setDescription("Books that contain fictional stories");
+        category.setDeleted(false);
+
+        return category;
+    }
+
     public static CategoryResponseDto createCategoryResponseDto(Category category) {
         CategoryResponseDto responseDto = new CategoryResponseDto();
         responseDto.setId(category.getId());

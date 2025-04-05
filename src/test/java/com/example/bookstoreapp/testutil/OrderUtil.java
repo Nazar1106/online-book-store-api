@@ -9,6 +9,7 @@ import com.example.bookstoreapp.entity.Status;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -48,6 +49,42 @@ public class OrderUtil {
         orderUpdateDto.setStatus(Status.DELIVERED);
 
         return orderUpdateDto;
+    }
+
+    public static List<Order> getListOrders() {
+        Order order = new Order();
+        order.setId(1L);
+        order.setTotal(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP));
+        order.setStatus(Status.PENDING);
+        order.setShippingAddress("testShippingAddress");
+        order.setDeleted(false);
+
+        Order order2 = new Order();
+        order2.setId(2L);
+        order2.setTotal(BigDecimal.valueOf(200).setScale(2, RoundingMode.HALF_UP));
+        order2.setStatus(Status.COMPLETED);
+        order2.setShippingAddress("TEST ADDRESS 1");
+        order2.setDeleted(false);
+
+        List<Order> list = new ArrayList<>();
+        list.add(order);
+        list.add(order2);
+
+        return list;
+    }
+
+    public static List<Order> getListOrder() {
+        Order order = new Order();
+        order.setId(3L);
+        order.setTotal(BigDecimal.valueOf(350).setScale(2, RoundingMode.HALF_UP));
+        order.setStatus(Status.DELIVERED);
+        order.setShippingAddress("TEST ADDRESS 3");
+        order.setDeleted(false);
+
+        List<Order> list = new ArrayList<>();
+        list.add(order);
+
+        return list;
     }
 
     public static Order getOrder() {

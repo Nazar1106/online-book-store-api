@@ -198,4 +198,31 @@ public class BookUtil {
 
         return createBookRequestDto;
     }
+
+    public static List<Book> getExpectedBooks() {
+        Book book1 = new Book();
+        book1.setId(1L);
+        book1.setTitle("NewBookTitle1");
+        book1.setAuthor("NewBookAuthor1");
+        book1.setIsbn("NewBookIsbn1");
+        book1.setPrice(BigDecimal.valueOf(150));
+        book1.setDescription("NewBookDescription1");
+        book1.setCoverImage("NewCoverImage1");
+        book1.setDeleted(false);
+        book1.setCategories(Set.of(CategoryUtil.getCategory()));
+
+        Book book2 = new Book();
+        book2.setId(2L);
+        book2.setTitle("NewBookTitle2");
+        book2.setAuthor("NewBookAuthor2");
+        book2.setIsbn("NewBookIsbn2");
+        book2.setPrice(BigDecimal.valueOf(120));
+        book2.setDescription("NewBookDescription2");
+        book2.setCoverImage("NewCoverImage2");
+        book2.setDeleted(false);
+        book2.setCategories(Set.of(CategoryUtil.getCategory()));
+
+        return List.of(book1, book2);
+    }
+
 }
