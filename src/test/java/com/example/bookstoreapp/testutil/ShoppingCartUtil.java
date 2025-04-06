@@ -37,6 +37,22 @@ public class ShoppingCartUtil {
         return shoppingCart;
     }
 
+    public static ShoppingCartDto getExpectedShoppingCartDto() {
+        ShoppingCartDto shoppingCartDto = new ShoppingCartDto();
+        shoppingCartDto.setId(1L);
+        shoppingCartDto.setUserId(1L);
+        shoppingCartDto.setCartItems(Set.of(CartItemUtil.getShoppingCartItemDto()));
+        return shoppingCartDto;
+    }
+
+    public static ShoppingCartDto getExpectedCart() {
+        ShoppingCartDto shoppingCartDto = new ShoppingCartDto();
+        shoppingCartDto.setId(1L);
+        shoppingCartDto.setUserId(1L);
+        shoppingCartDto.setCartItems(Set.of(CartItemUtil.getShoppingCartItem()));
+        return shoppingCartDto;
+    }
+
     public static ShoppingCart getExpectedShoppingCart() {
         ShoppingCart shoppingCart = new ShoppingCart();
         User user = new User();

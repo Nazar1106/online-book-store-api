@@ -1,8 +1,6 @@
 package com.example.bookstoreapp.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -16,9 +14,11 @@ import com.example.bookstoreapp.dto.orderdto.OrderResponseDto;
 import com.example.bookstoreapp.dto.orderdto.OrderUpdateDto;
 import com.example.bookstoreapp.dto.orderitemdto.OrderItemResponseDto;
 import com.example.bookstoreapp.entity.User;
+import com.example.bookstoreapp.testutil.OrderItemUtil;
 import com.example.bookstoreapp.testutil.OrderUtil;
 import com.example.bookstoreapp.testutil.UserUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -57,7 +57,7 @@ public class OrderControllerTest {
     private static final String CATEGORIES_TO_TEST_DB_SQL =
             "database/categories/insert-categories-to-test-db.sql";
     private static final String INSERT_SHOPPING_CART_FOR_USER_INTO_DB_SQL =
-            "database/cartitems/insert-shopping-cart-for-user-into-db.sql";
+            "database/shoppingcarts/insert-shopping-cart-for-user-into-db.sql";
 
     private static MockMvc mockMvc;
 
@@ -116,7 +116,6 @@ public class OrderControllerTest {
                 .readValue(result.getResponse().getContentAsString(), OrderResponseDto.class);
         expected.setOrderDate(actual.getOrderDate());
 
-        assertNotNull(result);
         assertThat(expected).usingRecursiveComparison().isEqualTo(actual);
     }
 
@@ -136,8 +135,8 @@ public class OrderControllerTest {
         mockMvc.perform(post("/orders")
                         .with(authentication(auth)).contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
-                .andExpect(status().isForbidden())
-                .andReturn();
+                .andExpect(status().isForbidden());
+
     }
 
     @Test
@@ -164,10 +163,9 @@ public class OrderControllerTest {
                 .readValue(result.getResponse().getContentAsString(),
                         new TypeReference<>() {
                         });
-        expected.getFirst().setOrderDate(actual.getFirst().getOrderDate());
 
-        assertNotNull(actual);
-        assertThat(expected).usingRecursiveComparison().isEqualTo(actual);
+        assertThat(expected).usingRecursiveComparison()
+                .ignoringFields("orderDate").isEqualTo(actual);
     }
 
     @Test
@@ -195,7 +193,6 @@ public class OrderControllerTest {
         OrderUpdateDto actual = objectMapper
                 .readValue(result.getResponse().getContentAsString(), OrderUpdateDto.class);
 
-        assertNotNull(actual);
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
@@ -204,6 +201,7 @@ public class OrderControllerTest {
     @DisplayName("Get order items for valid user")
     void getOrderItems_ValidUser_ShouldReturnOrderItems() throws Exception {
         Long orderId = 1L;
+        OrderItemResponseDto expected = OrderItemUtil.getOrderItemResponseDto();
         UsernamePasswordAuthenticationToken auth = new
                 UsernamePasswordAuthenticationToken(UserUtil.getUser(), null,
                 UserUtil.getUser().getAuthorities());
@@ -220,10 +218,14 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.totalElements").value(1))
                 .andReturn();
 
-        assertNotNull(result);
+        JsonNode root = objectMapper
+                .readTree(result.getResponse().getContentAsString());
 
-        String jsonResponse = result.getResponse().getContentAsString();
-        assertFalse(jsonResponse.isEmpty(), "Response body should not be empty");
+        List<OrderItemResponseDto> actual = objectMapper
+                .readValue(root.get("content").toString(),
+                        new TypeReference<>() {});
+
+        assertThat(actual.getFirst()).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -250,7 +252,6 @@ public class OrderControllerTest {
         OrderItemResponseDto actual = objectMapper
                 .readValue(result.getResponse().getContentAsString(), OrderItemResponseDto.class);
 
-        assertNotNull(actual);
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 

@@ -27,7 +27,7 @@ public class ShoppingCartRepositoryTest {
 
     private static final String DELETE_ALL_DATA_SQL = "database/delete-all-data.sql";
     private static final String INSERT_SHOPPING_CART_FOR_USER_INTO_DB_SQL =
-            "database/cartitems/insert-shopping-cart-for-user-into-db.sql";
+            "database/shoppingcarts/insert-shopping-cart-for-user-into-db.sql";
     private static final String INSERT_BOOKS_WITH_CATEGORIES_TO_DB_SQL =
             "database/books/insert-books-with-categories-to-db.sql";
     private static final String CATEGORIES_TO_TEST_DB_SQL =

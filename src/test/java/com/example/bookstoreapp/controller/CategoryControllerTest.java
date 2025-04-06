@@ -18,6 +18,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.bookstoreapp.dto.categorydto.BookDtoWithoutCategoryIds;
 import com.example.bookstoreapp.dto.categorydto.CategoryRequestDto;
 import com.example.bookstoreapp.dto.categorydto.CategoryResponseDto;
+import com.example.bookstoreapp.testutil.CategoryUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -97,7 +100,6 @@ class CategoryControllerTest {
         CategoryResponseDto responseDto = objectMapper.readValue(
                 result.getResponse().getContentAsString(), CategoryResponseDto.class);
 
-        assertNotNull(responseDto);
         assertThat(expectedDto).usingRecursiveComparison().isEqualTo(responseDto);
     }
 
@@ -106,14 +108,22 @@ class CategoryControllerTest {
     @WithMockUser(username = "user", authorities = "USER")
     void getAll_ExistingData_ShouldReturnPageCategoryResponseDto() throws Exception {
         Pageable pageable = Pageable.ofSize(4);
+        List<CategoryResponseDto> expectedCategories = CategoryUtil.getAllCategories();
 
         String jsonRequest = objectMapper.writeValueAsString(pageable);
 
-        mockMvc.perform(get("/categories")
+        MvcResult result = mockMvc.perform(get("/categories")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andReturn();
+
+        JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
+
+        List<CategoryResponseDto> actual = objectMapper.readValue(root.get("content").toString(),
+                new TypeReference<>(){});
+
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expectedCategories);
     }
 
     @Test
@@ -138,7 +148,6 @@ class CategoryControllerTest {
         CategoryResponseDto resultDto = objectMapper.readValue(
                 result.getResponse().getContentAsString(), CategoryResponseDto.class);
 
-        assertNotNull(resultDto);
         assertThat(updateRequestDto).usingRecursiveComparison().isEqualTo(resultDto);
     }
 
@@ -153,8 +162,8 @@ class CategoryControllerTest {
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         mockMvc.perform(put("/categories/{id}", categoryId)
-                .content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden()).andReturn();
+                        .content(jsonRequest).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -170,8 +179,7 @@ class CategoryControllerTest {
         mockMvc.perform(put("/categories/{id}", categoryId)
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andReturn();
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -203,15 +211,12 @@ class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<BookDtoWithoutCategoryIds> resultBooks = objectMapper
+        List<BookDtoWithoutCategoryIds> actualBooks = objectMapper
                 .readValue(result.getResponse()
                         .getContentAsString(), objectMapper.getTypeFactory()
                         .constructCollectionType(List.class, BookDtoWithoutCategoryIds.class));
 
-        assertNotNull(resultBooks);
-        assertEquals(expectedBooks.size(), resultBooks.size());
-        assertEquals(expectedBooks.get(0).getTitle(), resultBooks.get(0).getTitle());
-        assertEquals(expectedBooks.get(1).getTitle(), resultBooks.get(1).getTitle());
+        assertThat(actualBooks).usingRecursiveComparison().isEqualTo(expectedBooks);
     }
 
     @Test
@@ -221,8 +226,7 @@ class CategoryControllerTest {
 
         mockMvc.perform(get("/categories/{id}/books", categoryId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

@@ -44,6 +44,7 @@ public class ShoppingCartController {
         return shoppingCartService.getByUserId(user.getId());
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Add item to shopping cart",
             description = "Adds a specified item to the shopping cart of "

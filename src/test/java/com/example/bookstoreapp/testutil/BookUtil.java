@@ -225,4 +225,37 @@ public class BookUtil {
         return List.of(book1, book2);
     }
 
+    public static List<BookDto> getAllBooks() {
+        BookDto book1 = new BookDto();
+        book1.setId(1L);
+        book1.setTitle("NewBookTitle1");
+        book1.setAuthor("NewBookAuthor1");
+        book1.setIsbn("NewBookIsbn1");
+        book1.setPrice(BigDecimal.valueOf(150));
+        book1.setDescription("NewBookDescription1");
+        book1.setCoverImage("NewCoverImage1");
+        book1.setCategoryIds(List.of(1L));
+
+        BookDto book2 = new BookDto();
+        book2.setId(2L);
+        book2.setTitle("NewBookTitle2");
+        book2.setAuthor("NewBookAuthor2");
+        book2.setIsbn("NewBookIsbn2");
+        book2.setPrice(BigDecimal.valueOf(120));
+        book2.setDescription("NewBookDescription2");
+        book2.setCoverImage("NewCoverImage2");
+        book2.setCategoryIds(List.of(1L));
+
+        BookDto book3 = new BookDto();
+        book3.setId(3L);
+        book3.setTitle("NewBookTitle3");
+        book3.setAuthor("NewBookAuthor3");
+        book3.setIsbn("NewBookIsbn3");
+        book3.setPrice(BigDecimal.valueOf(200));
+        book3.setDescription("NewBookDescription3");
+        book3.setCoverImage("NewCoverImage3");
+        book3.setCategoryIds(List.of(2L));
+
+        return List.of(book1, book2, book3);
+    }
 }

@@ -1,15 +1,15 @@
 package com.example.bookstoreapp.controller;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.bookstoreapp.dto.cartitemdto.CartItemRequestDto;
-import com.example.bookstoreapp.entity.ShoppingCart;
+import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartDto;
+import com.example.bookstoreapp.dto.shoppingcartdto.ShoppingCartItemDto;
 import com.example.bookstoreapp.entity.User;
 import com.example.bookstoreapp.testutil.CartItemUtil;
 import com.example.bookstoreapp.testutil.ShoppingCartUtil;
@@ -42,7 +42,7 @@ import org.springframework.web.context.WebApplicationContext;
 public class ShoppingCartControllerTest {
 
     private static final String INSERT_SHOPPING_CART_FOR_USER_INTO_DB_SQL =
-            "database/cartitems/insert-shopping-cart-for-user-into-db.sql";
+            "database/shoppingcarts/insert-shopping-cart-for-user-into-db.sql";
     private static final String INSERT_BOOKS_WITH_CATEGORIES_TO_DB_SQL =
             "database/books/insert-books-with-categories-to-db.sql";
     private static final String CATEGORIES_TO_TEST_DB_SQL =
@@ -83,36 +83,39 @@ public class ShoppingCartControllerTest {
     @DisplayName("Get shopping cart by userId")
     void getByUserId_ValidUser_ShouldReturnShoppingCartDto() throws Exception {
         User user = UserUtil.getUser();
+
+        ShoppingCartDto expectedShoppingCartDto = ShoppingCartUtil.getExpectedShoppingCartDto();
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 user, null, user.getAuthorities()
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        ShoppingCart cartWithItems = ShoppingCartUtil.getShoppingCart();
-
-        String jsonRequest = objectMapper.writeValueAsString(cartWithItems);
-
         MvcResult result = mockMvc.perform(get("/cart")
                         .with(authentication(auth))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.cartItems").isArray())
-                .andExpect(jsonPath("$.cartItems[0].id").exists())
-                .andExpect(jsonPath("$.cartItems[0].bookId").exists())
-                .andExpect(jsonPath("$.cartItems[0].bookTitle").exists())
-                .andExpect(jsonPath("$.cartItems[0].quantity").exists())
                 .andReturn();
 
-        assertNotNull(result);
+        ShoppingCartDto actual = objectMapper
+                .readValue(result.getResponse().getContentAsString(), ShoppingCartDto.class);
+
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .ignoringFieldsOfTypes(ShoppingCartItemDto.class)
+                .isEqualTo(expectedShoppingCartDto);
+
+        assertThat(actual.getCartItems())
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(expectedShoppingCartDto.getCartItems());
     }
 
     @Test
     @WithMockUser(username = "user", authorities = {"USER"})
     @DisplayName("Save shopping cart with valid data")
     void save_ValidCartItemRequestDto_ShouldReturnShoppingCartDto() throws Exception {
-        Long bookId = 1L;
         CartItemRequestDto requestDto = CartItemUtil.getCartItemRequestDto();
+        ShoppingCartDto expectedShoppingCartDto = ShoppingCartUtil.getExpectedCart();
 
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
         User user = UserUtil.getUser();
@@ -125,12 +128,20 @@ public class ShoppingCartControllerTest {
                         .with(authentication(auth))
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.cartItems[0].bookId").value(bookId))
-                .andExpect(jsonPath("$.cartItems[0].bookTitle").value("NewBookTitle1"))
+                .andExpect(status().isCreated())
                 .andReturn();
 
-        assertNotNull(result);
+        ShoppingCartDto actual = objectMapper
+                .readValue(result.getResponse().getContentAsString(), ShoppingCartDto.class);
+
+        assertThat(actual).usingRecursiveComparison()
+                .ignoringFields("id")
+                .ignoringFieldsOfTypes(ShoppingCartItemDto.class)
+                .isEqualTo(expectedShoppingCartDto);
+
+        assertThat(actual.getCartItems()).usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(expectedShoppingCartDto.getCartItems());
     }
 
     @AfterEach

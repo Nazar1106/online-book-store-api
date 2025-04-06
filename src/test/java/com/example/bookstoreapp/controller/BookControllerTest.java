@@ -20,6 +20,7 @@ import com.example.bookstoreapp.dto.bookdto.BookSearchParametersDto;
 import com.example.bookstoreapp.dto.bookdto.CreateBookRequestDto;
 import com.example.bookstoreapp.testutil.BookUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -84,6 +85,7 @@ class BookControllerTest {
     @DisplayName("Get all books by existing data, should return a page of BookDto")
     void getAll_ByExistData_ShouldReturnPageBookDto() throws Exception {
         Pageable requestDto = Pageable.ofSize(3);
+        List<BookDto> expectedBooks = BookUtil.getAllBooks();
 
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
@@ -95,7 +97,13 @@ class BookControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertNotNull(result);
+        JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
+        List<BookDto> actualBooks = objectMapper.readValue(
+                root.get("content").toString(),
+                new TypeReference<>() {
+                }
+        );
+        assertThat(actualBooks).usingRecursiveComparison().isEqualTo(expectedBooks);
     }
 
     @WithMockUser(username = "user", authorities = {"USER"})
@@ -118,8 +126,6 @@ class BookControllerTest {
         List<BookDto> actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });
-
-        assertNotNull(actual);
         assertThat(expected).usingRecursiveComparison().isEqualTo(actual);
     }
 
@@ -229,7 +235,7 @@ class BookControllerTest {
         Long invalidId = 999L;
 
         mockMvc.perform(delete("/books/{id}", invalidId)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
