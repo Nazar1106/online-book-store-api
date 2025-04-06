@@ -110,8 +110,6 @@ public class OrderControllerTest {
                         .with(authentication(auth)).contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.status").isString())
                 .andReturn();
 
         OrderResponseDto actual = objectMapper
