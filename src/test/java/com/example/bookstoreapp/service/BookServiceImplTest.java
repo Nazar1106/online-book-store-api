@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.example.bookstoreapp.BookUtil;
 import com.example.bookstoreapp.dto.bookdto.BookDto;
 import com.example.bookstoreapp.dto.bookdto.BookSearchParametersDto;
 import com.example.bookstoreapp.dto.bookdto.CreateBookRequestDto;
@@ -20,6 +19,7 @@ import com.example.bookstoreapp.mapper.BookMapper;
 import com.example.bookstoreapp.repository.book.BookRepository;
 import com.example.bookstoreapp.repository.book.BookSpecificationBuilder;
 import com.example.bookstoreapp.service.impl.BookServiceImpl;
+import com.example.bookstoreapp.testutil.BookUtil;
 import jakarta.validation.ValidationException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -58,7 +58,7 @@ public class BookServiceImplTest {
     @BeforeEach
     public void setUp() {
         requestDto = BookUtil.createBookRequestDto();
-        book = BookUtil.createBook(requestDto);
+        book = BookUtil.getBook(requestDto);
         bookDto = BookUtil.createBookDto(book);
         pageable = BookUtil.createPageable();
         bookPage = BookUtil.createBookPage(pageable);
@@ -242,4 +242,5 @@ public class BookServiceImplTest {
 
         assertThat(exception.getMessage()).isEqualTo(expectedMessage);
     }
+
 }

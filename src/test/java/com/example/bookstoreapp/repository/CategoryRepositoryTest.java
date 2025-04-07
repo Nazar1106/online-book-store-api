@@ -1,12 +1,14 @@
 package com.example.bookstoreapp.repository;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.example.bookstoreapp.repository.category.CategoryRepository;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,16 @@ class CategoryRepositoryTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @BeforeAll
+    static void beforeAll(@Autowired DataSource dataSource) throws SQLException {
+        teardown(dataSource);
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(true);
+            ScriptUtils.executeSqlScript(connection,
+                    new ClassPathResource(INSERT_CATEGORIES_SCRIPT_PATH));
+        }
+    }
+
     @Test
     @DisplayName("Should return true when category exists by ID")
     public void existById_CategoryExist_ReturnTrue() {
@@ -34,7 +46,7 @@ class CategoryRepositoryTest {
 
         boolean exists = categoryRepository.existsById(existingCategoryId);
 
-        Assertions.assertTrue(exists, "Category with ID " + existingCategoryId
+        assertTrue(exists, "Category with ID " + existingCategoryId
                 + " should exist in the database.");
     }
 
@@ -45,18 +57,8 @@ class CategoryRepositoryTest {
 
         boolean exists = categoryRepository.existsById(nonExistingCategoryId);
 
-        Assertions.assertFalse(exists, "Category with ID " + nonExistingCategoryId
+        assertFalse(exists, "Category with ID " + nonExistingCategoryId
                 + " should not exist in the database.");
-    }
-
-    @BeforeAll
-    static void beforeAll(@Autowired DataSource dataSource) throws SQLException {
-        teardown(dataSource);
-        try (Connection connection = dataSource.getConnection()) {
-            connection.setAutoCommit(true);
-            ScriptUtils.executeSqlScript(connection,
-                    new ClassPathResource(INSERT_CATEGORIES_SCRIPT_PATH));
-        }
     }
 
     @AfterAll

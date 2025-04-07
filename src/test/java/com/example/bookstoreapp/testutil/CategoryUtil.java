@@ -1,4 +1,4 @@
-package com.example.bookstoreapp;
+package com.example.bookstoreapp.testutil;
 
 import com.example.bookstoreapp.dto.categorydto.BookDtoWithoutCategoryIds;
 import com.example.bookstoreapp.dto.categorydto.CategoryRequestDto;
@@ -20,6 +20,40 @@ public class CategoryUtil {
         category.setDescription(description);
         category.setDeleted(false);
         return category;
+    }
+
+    public static Category getCategory() {
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Fiction");
+        category.setDescription("Books that contain fictional stories");
+        category.setDeleted(false);
+
+        return category;
+    }
+
+    public static List<CategoryResponseDto> getAllCategories() {
+        CategoryResponseDto category = new CategoryResponseDto();
+        category.setId(1L);
+        category.setName("Fiction");
+        category.setDescription("Books that contain fictional stories");
+
+        CategoryResponseDto category2 = new CategoryResponseDto();
+        category2.setId(2L);
+        category2.setName("Science");
+        category2.setDescription("Books related to scientific topics");
+
+        CategoryResponseDto category3 = new CategoryResponseDto();
+        category3.setId(3L);
+        category3.setName("History");
+        category3.setDescription("Books that cover historical events and figures");
+
+        CategoryResponseDto category4 = new CategoryResponseDto();
+        category4.setId(4L);
+        category4.setName("Technology");
+        category4.setDescription("Books about technological advancements and innovations");
+
+        return List.of(category, category2, category3, category4);
     }
 
     public static CategoryResponseDto createCategoryResponseDto(Category category) {
@@ -90,9 +124,11 @@ public class CategoryUtil {
     }
 
     public static CategoryResponseDto expectedNewCategory() {
+        Long id = 5L;
         String name = "createName";
         String description = "createDescription";
         CategoryResponseDto responseDto = new CategoryResponseDto();
+        responseDto.setId(id);
         responseDto.setName(name);
         responseDto.setDescription(description);
         return responseDto;

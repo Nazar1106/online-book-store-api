@@ -1,9 +1,10 @@
 package com.example.bookstoreapp.controller;
 
-import static com.example.bookstoreapp.BookUtil.creatBookRequestDto;
-import static com.example.bookstoreapp.BookUtil.createExpectedBookDto;
-import static com.example.bookstoreapp.BookUtil.getBookDto;
-import static com.example.bookstoreapp.BookUtil.getInvalidCreateBookRequestDto;
+import static com.example.bookstoreapp.testutil.BookUtil.creatBookRequestDto;
+import static com.example.bookstoreapp.testutil.BookUtil.createExpectedBookDto;
+import static com.example.bookstoreapp.testutil.BookUtil.getBookDto;
+import static com.example.bookstoreapp.testutil.BookUtil.getInvalidCreateBookRequestDto;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,10 +16,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.bookstoreapp.dto.bookdto.BookDto;
+import com.example.bookstoreapp.dto.bookdto.BookSearchParametersDto;
 import com.example.bookstoreapp.dto.bookdto.CreateBookRequestDto;
+import com.example.bookstoreapp.testutil.BookUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
@@ -30,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -39,7 +46,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class BookControllerIntegrationTest {
+class BookControllerTest {
     private static final String INSERT_BOOKS_SCRIPT_PATH =
             "database/books/insert-books-with-categories-to-db.sql";
     private static final String INSERT_CATEGORIES_SCRIPT_PATH =
@@ -71,6 +78,55 @@ class BookControllerIntegrationTest {
             ScriptUtils.executeSqlScript(connection,
                     new ClassPathResource(INSERT_BOOKS_SCRIPT_PATH));
         }
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"USER"})
+    @DisplayName("Get all books by existing data, should return a page of BookDto")
+    void getAll_ByExistData_ShouldReturnPageBookDto() throws Exception {
+        Pageable requestDto = Pageable.ofSize(3);
+        List<BookDto> expectedBooks = BookUtil.getAllBooks();
+
+        String jsonRequest = objectMapper.writeValueAsString(requestDto);
+
+        MvcResult result = mockMvc.perform(get("/books")
+                        .param("page", "0")
+                        .param("size", "3")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode root = objectMapper.readTree(result.getResponse().getContentAsString());
+        List<BookDto> actualBooks = objectMapper.readValue(
+                root.get("content").toString(),
+                new TypeReference<>() {
+                }
+        );
+        assertThat(actualBooks).usingRecursiveComparison().isEqualTo(expectedBooks);
+    }
+
+    @WithMockUser(username = "user", authorities = {"USER"})
+    @Test
+    void search_ExistData_ShouldReturnListBookDto() throws Exception {
+        BookSearchParametersDto searchRequest = new BookSearchParametersDto(
+                new String[]{"NewBookAuthor1"}, null, null, null);
+
+        List<BookDto> expected = BookUtil.searchBooksByParams();
+
+        String jsonRequest = objectMapper.writeValueAsString(searchRequest);
+
+        MvcResult result = mockMvc.perform(get("/books/search")
+                        .param("author", "NewBookAuthor1")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<BookDto> actual = objectMapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertThat(expected).usingRecursiveComparison().isEqualTo(actual);
     }
 
     @Test
@@ -179,7 +235,7 @@ class BookControllerIntegrationTest {
         Long invalidId = 999L;
 
         mockMvc.perform(delete("/books/{id}", invalidId)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
